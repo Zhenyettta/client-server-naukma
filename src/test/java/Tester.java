@@ -11,10 +11,13 @@ import static org.zhenyok.Sender.encode;
 class PackageTest {
     @Test
     public void globalTest() throws Exception {
-        String testMessage = "JUnit test :)";
+        String testMessage = "Katya bacha best";
         byte[] encryptedMessageBytes = testMessage.getBytes();
+
         Message message = new Message(1, 1, encryptedMessageBytes);
+
         Package myPackage = Package.createPackage(ByteBuffer.wrap(encode(message)));
+
         Message decodedMessage = decode(myPackage);
 
         assertEquals(decodedMessage.cType(), message.cType());
