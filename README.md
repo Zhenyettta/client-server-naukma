@@ -1,2 +1,2 @@
 # client-server-naukma
-![img.png](img.png)
+![Cringe.mp4](Cringe.mp4)
