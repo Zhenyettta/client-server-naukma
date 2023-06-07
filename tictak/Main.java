@@ -8,7 +8,7 @@ public class Main {
         ReentrantLock rel = new ReentrantLock();
         Condition condition = rel.newCondition();
         Data d = new Data();
-
+assd
 
         new Worker(1, d, rel, condition);
         new Worker(2, d, rel, condition);
