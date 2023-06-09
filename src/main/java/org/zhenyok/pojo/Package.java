@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-public record Package(byte bSrc, long bPktId, int wLen, short wCrc16, Message message, short wCrc16End,
+public record Package(byte bSrc, long bPktId, int textLength, int dataLength, short wCrc16, Message message, short wCrc16End,
                       byte[] packageBytes) {
     private static final byte B_MAGIC = 0x13;
 
@@ -16,12 +16,13 @@ public record Package(byte bSrc, long bPktId, int wLen, short wCrc16, Message me
         }
         byte bSrc = bytes.get(1);
         long bPktId = bytes.getLong(2);
-        int wLen = bytes.getInt(10);
-        short wCrc16 = bytes.getShort(14);
-        short wCrc16End = bytes.getShort(16 + wLen);
+        int textLength = bytes.getInt(10);
+        int dataLength = bytes.getInt(14);
+        short wCrc16 = bytes.getShort(18);
+        short wCrc16End = bytes.getShort(18 + textLength);
         byte[] packageBytes = bytes.array();
-        Message message = new Message(bytes, wLen);
+        Message message = new Message(bytes, textLength, dataLength);
 
-        return new Package(bSrc, bPktId, wLen, wCrc16, message, wCrc16End, packageBytes);
+        return new Package(bSrc, bPktId, textLength,dataLength, wCrc16, message, wCrc16End, packageBytes);
     }
 }

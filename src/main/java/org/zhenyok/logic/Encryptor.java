@@ -8,15 +8,18 @@ import org.zhenyok.pojo.Message;
 import java.nio.ByteBuffer;
 
 public class Encryptor {
+    static int dataLength;
+    static int textLength;
 
     public static byte[] encode(Message command) {
         try {
             byte[] message = encodeMessage(command);
-            byte[] bytes = ByteBuffer.allocate(14)
+            byte[] bytes = ByteBuffer.allocate(18)
                     .put((byte) 0x13)
                     .put((byte) 1)
                     .putLong(10)
-                    .putInt(message.length)
+                    .putInt(textLength)
+                    .putInt(dataLength)
                     .array();
 
             return ByteBuffer.allocate(bytes.length + message.length + 4)
@@ -33,20 +36,24 @@ public class Encryptor {
 
     private static byte[] encodeMessage(Message message) {
         try {
-            byte[] encodedText = MyCipher.encrypt(message.messageBytes());
-            byte[] encodedData = MyCipher.encrypt(message.dataBytes());
-
-            return ByteBuffer.allocate(16 + encodedText.length + encodedData.length)
-                    .putInt(message.cType())
-                    .putInt(message.bUserId())
+            byte[] encodedText = MyCipher.encrypt(message.getMessageBytes());
+            byte[] encodedData = MyCipher.encrypt(message.getDataBytes());
+            textLength = encodedText.length;
+            dataLength = encodedData.length;
+            System.out.println(message);
+            return ByteBuffer.allocate(24 + encodedText.length + encodedData.length)
+                    .putInt(message.getCType())
+                    .putInt(message.getBUserId())
                     .put(encodedText)
-                    .putInt(message.count())
-                    .putDouble(message.price())
-                    .put(encodedText)
+                    .putInt(message.getCommand())
+                    .putInt(message.getCount())
+                    .putDouble(message.getPrice())
+                    .put(encodedData)
                     .array();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
 }

@@ -14,43 +14,41 @@ public class Decryptor {
             ByteBuffer wrap = ByteBuffer.wrap(pack.packageBytes());
             byte clientId = wrap.get(1);
             long packetId = wrap.getLong(2);
-            int messageLength = wrap.getInt(10);
-            short firstCrc16 = wrap.getShort(14);
+            int textLength = wrap.getInt(10);
+            int dataLength = wrap.getInt(14);
+            short firstCrc16 = wrap.getShort(18);
 
-            byte[] bytes = ByteBuffer.allocate(14)
+
+            byte[] bytes = ByteBuffer.allocate(18)
                     .put((byte) 0x13)
                     .put(clientId)
                     .putLong(packetId)
-                    .putInt(messageLength)
+                    .putInt(textLength)
+                    .putInt(dataLength)
                     .array();
 
             if (CRC16.crcEncode(bytes) != firstCrc16) {
                 throw new Exception("CRC16 error");
             }
 
-            byte[] messageBuffer = new byte[messageLength];
-            System.arraycopy(pack.packageBytes(), 16, messageBuffer, 0, messageLength);
 
-            if (CRC16.crcEncode(messageBuffer) != wrap.getShort(16 + messageLength)) {
-                throw new Exception("CRC16 error");
-            }
+            int cType = wrap.getInt(20);
+            int bUserId = wrap.getInt(24);
+            byte[] decryptedMessage = new byte[textLength];
+            byte[] decryptedData = new byte[dataLength];
 
-            ByteBuffer buffer = ByteBuffer.wrap(messageBuffer);
-            int cType = buffer.getInt(0);
-            int bUserId = buffer.getInt(4);
-            byte[] decryptedMessage = new byte[messageLength - 8];
-            byte[] decryptedData = new byte[messageLength - 8];
+            wrap.get(28, decryptedMessage);
 
-            buffer.get(8, decryptedMessage);
+            int command = wrap.getInt(28 + textLength);
+            int count = wrap.getInt(32 + textLength);
+            double price = wrap.getDouble(36 + textLength);
 
-            int count = buffer.getInt(8 + decryptedMessage.length);
-            double price = buffer.getDouble(12 + decryptedMessage.length);
+            wrap.get(44 + textLength, decryptedData);
 
-            buffer.get(20 + decryptedMessage.length, decryptedData);
             byte[] resMessage = MyCipher.decrypt(decryptedMessage);
             byte[] resData = MyCipher.decrypt(decryptedData);
 
-            return new Message(cType, bUserId, resMessage, count, price, resData);
+            return new Message(cType, bUserId, resMessage, command, count, price, resData);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
