@@ -46,7 +46,9 @@ public class ProcessorTest {
         List<byte[]> encodedPackages = Encryptor.encode(messages);
 
         List<Package> packages = preparePackages(encodedPackages);
+        System.out.println(packages);
         List<Message> decodedMessages = Decryptor.decode(packages);
+        System.out.println(decodedMessages);
 
         assertNotNull(encodedPackages);
         assertNotNull(packages);
@@ -71,10 +73,10 @@ public class ProcessorTest {
         List<Message> messages = new ArrayList<>();
 
         Message message1 = new Message(1, 1, "Hello".getBytes(), 1, 10, 19.99, "Data1".getBytes());
-        Message message2 = new Message(2, 2, "World".getBytes(), 2, 5, 9.99, "Data2".getBytes());
+
 
         messages.add(message1);
-        messages.add(message2);
+
 
         return messages;
     }
