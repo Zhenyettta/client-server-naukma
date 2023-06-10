@@ -4,16 +4,37 @@ import org.zhenyok.crypto.CRC16;
 import org.zhenyok.crypto.MyCipher;
 import org.zhenyok.pojo.Message;
 
-
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Encryptor {
-    static int dataLength;
-    static int textLength;
+    private static final int NUM_THREADS = 10;
 
-    public static byte[] encode(Message command) {
+    public static List<byte[]> encode(List<Message> messages) {
+        List<byte[]> encodedPackages = new ArrayList<>();
+
+        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
+            for (Message message : messages) {
+                executorService.execute(() -> {
+                    byte[] encodedMessage = encodePackage(message);
+                    encodedPackages.add(encodedMessage);
+                });
+            }
+        }
+
+        return encodedPackages;
+    }
+
+    private static byte[] encodePackage(Message message) {
         try {
-            byte[] message = encodeMessage(command);
+            byte[] encodedText = MyCipher.encrypt(message.getMessageBytes());
+            byte[] encodedData = MyCipher.encrypt(message.getDataBytes());
+            int textLength = encodedText.length;
+            int dataLength = encodedData.length;
+
             byte[] bytes = ByteBuffer.allocate(18)
                     .put((byte) 0x13)
                     .put((byte) 1)
@@ -22,38 +43,26 @@ public class Encryptor {
                     .putInt(dataLength)
                     .array();
 
-            return ByteBuffer.allocate(bytes.length + message.length + 4)
-                    .put(bytes)
-                    .putShort(CRC16.crcEncode(bytes))
-                    .put(message)
-                    .putShort(CRC16.crcEncode(message))
-                    .array();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static byte[] encodeMessage(Message message) {
-        try {
-            byte[] encodedText = MyCipher.encrypt(message.getMessageBytes());
-            byte[] encodedData = MyCipher.encrypt(message.getDataBytes());
-            textLength = encodedText.length;
-            dataLength = encodedData.length;
-            System.out.println(message);
-            return ByteBuffer.allocate(24 + encodedText.length + encodedData.length)
+            ByteBuffer encodedMessageBuffer = ByteBuffer.allocate(24 + textLength + dataLength)
                     .putInt(message.getCType())
                     .putInt(message.getBUserId())
                     .put(encodedText)
                     .putInt(message.getCommand())
                     .putInt(message.getCount())
                     .putDouble(message.getPrice())
-                    .put(encodedData)
+                    .put(encodedData);
+
+            byte[] encodedMessage = encodedMessageBuffer.array();
+
+            return ByteBuffer.allocate(bytes.length + encodedMessage.length + 4)
+                    .put(bytes)
+                    .putShort(CRC16.crcEncode(bytes))
+                    .put(encodedMessage)
+                    .putShort(CRC16.crcEncode(encodedMessage))
                     .array();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-
 }

@@ -1,11 +1,9 @@
 package org.zhenyok.pojo;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
-public record Package(byte bSrc, long bPktId, int textLength, int dataLength, short wCrc16, Message message, short wCrc16End,
+public record Package(byte bSrc, long bPktId, int textLength, int dataLength, short wCrc16, Message message,
+                      short wCrc16End,
                       byte[] packageBytes) {
     private static final byte B_MAGIC = 0x13;
 
@@ -23,6 +21,8 @@ public record Package(byte bSrc, long bPktId, int textLength, int dataLength, sh
         byte[] packageBytes = bytes.array();
         Message message = new Message(bytes, textLength, dataLength);
 
-        return new Package(bSrc, bPktId, textLength,dataLength, wCrc16, message, wCrc16End, packageBytes);
+        return new Package(bSrc, bPktId, textLength, dataLength, wCrc16, message, wCrc16End, packageBytes);
     }
+
+
 }

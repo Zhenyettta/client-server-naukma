@@ -6,95 +6,169 @@ import org.zhenyok.pojo.Product;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Processor {
+    private static final int NUM_THREADS = 10;
+    private static final Lock productLock = new ReentrantLock();
+
     public static void process(Message message) {
         int command = message.getCommand();
         switch (command) {
-            // Create product
-            case 0 -> {
-                Product product = new Product(new String(message.getDataBytes()), message.getCount(), message.getPrice(), null);
-                Product.products.add(product);
-                message.setMessageBytes("Product created successfully".getBytes());
+            case 0:
+                createProduct(message);
+                break;
+
+            case 1:
+                getProductCount(message);
+                break;
+
+            case 2:
+                removeProduct(message);
+                break;
+
+            case 3:
+                addProduct(message);
+                break;
+
+            case 4:
+                createGroup(message);
+                break;
+
+            case 5:
+                addProductToGroup(message);
+                break;
+
+            case 6:
+                changeProductPrice(message);
+                break;
+        }
+    }
+
+    private static void createProduct(Message message) {
+        System.out.println("CREATE");
+        productLock.lock();
+        try {
+            Product product = new Product(new String(message.getDataBytes()), message.getCount(), message.getPrice(), null);
+            Product.products.add(product);
+            message.setMessageBytes("Product created successfully".getBytes());
+        } finally {
+            productLock.unlock();
+        }
+    }
+
+    private static void getProductCount(Message message) {
+        System.out.println("GET");
+        Product product = getProductByName(new String(message.getDataBytes()));
+
+        if (product != null) {
+            int count = product.getCount();
+            message.setMessageBytes(("Count of your product = " + count).getBytes());
+        } else {
+            message.setMessageBytes("Product not found".getBytes());
+        }
+    }
+
+    private static void removeProduct(Message message) {
+        System.out.println("REMOVE");
+        Product product = getProductByName(new String(message.getDataBytes()));
+
+        if (product != null) {
+            productLock.lock();
+            try {
+                int countToRemove = message.getCount();
+                int currentCount = product.getCount();
+                int newCount = Math.max(currentCount - countToRemove, 0);
+                int removedCount = currentCount - newCount;
+                product.setCount(newCount);
+                message.setMessageBytes(("Removed " + removedCount + " products, actual count = " + newCount).getBytes());
+            } finally {
+                productLock.unlock();
             }
+        } else {
+            message.setMessageBytes("Product not found".getBytes());
+        }
+    }
 
-            case 1 -> {
-                Product product = Product.products.stream()
-                        .filter(i -> i.getName().equals(new String(message.getDataBytes())))
-                        .findFirst()
-                        .orElse(null);
+    private static void addProduct(Message message) {
+        System.out.println("ADD");
+        Product product = getProductByName(new String(message.getDataBytes()));
 
-                if (product != null) {
-                    int count = product.getCount();
-                    message.setMessageBytes(("Count of your product = " + count).getBytes());
-                } else {
-                    message.setMessageBytes("Product not found".getBytes());
-                }
-            }
-
-            case 2 -> {
-                Product product = Product.products.stream()
-                        .filter(i -> i.getName().equals(new String(message.getDataBytes())))
-                        .findFirst()
-                        .orElse(null);
-
-                product.setCount(product.getCount() - message.getCount());
-                if (product.getCount() < 0) product.setCount(0);
-
-                message.setMessageBytes(("Removed " + message.getCount() + " products, actual count = " + product.getCount()).getBytes());
-            }
-
-            case 3 -> {
-                Product product = Product.products.stream()
-                        .filter(i -> i.getName().equals(new String(message.getDataBytes())))
-                        .findFirst()
-                        .orElse(null);
-
+        if (product != null) {
+            productLock.lock();
+            try {
                 product.setCount(product.getCount() + message.getCount());
-
                 message.setMessageBytes(("Added " + message.getCount() + " products, actual count = " + product.getCount()).getBytes());
+            } finally {
+                productLock.unlock();
             }
+        } else {
+            message.setMessageBytes("Product not found".getBytes());
+        }
+    }
 
-            case 4 -> {
-                Group group = new Group(new String(message.getDataBytes()), Collections.synchronizedList(new ArrayList<>()));
-                Group.groups.add(group);
-                message.setMessageBytes(("Group " + new String(message.getDataBytes()) + " was created").getBytes());
-            }
+    private static void createGroup(Message message) {
+        Group group = new Group(new String(message.getDataBytes()), Collections.synchronizedList(new ArrayList<>()));
+        Group.groups.add(group);
+        message.setMessageBytes(("Group " + new String(message.getDataBytes()) + " was created").getBytes());
+    }
 
-            case 5 -> {
-                String productName = new String(message.getDataBytes()).split(" ")[0];
+    private static void addProductToGroup(Message message) {
+        String[] data = new String(message.getDataBytes()).split(" ");
+        String productName = data[0];
+        String groupName = data[1];
 
-                Product product = Product.products.stream()
-                        .filter(i -> i.getName().equals(productName))
-                        .findFirst()
-                        .orElse(null);
+        Product product = getProductByName(productName);
+        Group group = getGroupByName(groupName);
 
-
-                String groupName = new String(message.getDataBytes()).split(" ")[1];
-
-                Group group = Group.groups.stream()
-                        .filter(i -> i.getName().equals(groupName))
-                        .findFirst()
-                        .orElse(null);
-
+        if (product != null && group != null) {
+            synchronized (group) {
                 group.addProduct(product);
                 product.setGroup(group);
-
-                System.out.println(group.getProducts() + " aboba");
-
-                message.setMessageBytes(("Product " + productName + " was successfully added to " + groupName).getBytes());
-
-
             }
 
-            case 6 -> {
-                Product product = Product.products.stream()
-                        .filter(i -> i.getName().equals(new String(message.getDataBytes())))
-                        .findFirst()
-                        .orElse(null);
-                product.setPrice(message.getPrice());
+            message.setMessageBytes(("Product " + productName + " was successfully added to " + groupName).getBytes());
+        } else {
+            message.setMessageBytes("Product or group not found".getBytes());
+        }
+    }
 
-                message.setMessageBytes(("Price of product " + new String(message.getDataBytes()) + " was changed to " + message.getPrice()).getBytes());
+    private static void changeProductPrice(Message message) {
+        Product product = getProductByName(new String(message.getDataBytes()));
+
+        if (product != null) {
+            synchronized (product) {
+                product.setPrice(message.getPrice());
+            }
+
+            message.setMessageBytes(("Price of product " + new String(message.getDataBytes()) + " was changed to " + product.getPrice()).getBytes());
+        } else {
+            message.setMessageBytes("Product not found".getBytes());
+        }
+    }
+
+    private static Product getProductByName(String name) {
+        return Product.products.stream()
+                .filter(i -> i.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static Group getGroupByName(String name) {
+        return Group.groups.stream()
+                .filter(i -> i.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static void processMessagesInParallel(List<Message> messages) {
+        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
+            for (Message message : messages) {
+                executorService.execute(() -> process(message));
             }
         }
     }

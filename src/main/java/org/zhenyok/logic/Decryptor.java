@@ -6,8 +6,31 @@ import org.zhenyok.pojo.Message;
 import org.zhenyok.pojo.Package;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Decryptor {
+    private static final int NUM_THREADS = 10;
+
+    public static List<Message> decode(List<Package> packages) {
+        List<Message> decodedMessages = Collections.synchronizedList(new ArrayList<>());
+
+        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
+            for (Package pack : packages) {
+                executorService.execute(() -> {
+                    Message message = decode(pack);
+                    if (message != null) {
+                        decodedMessages.add(message);
+                    }
+                });
+            }
+        }
+
+        return decodedMessages;
+    }
 
     public static Message decode(Package pack) {
         try {

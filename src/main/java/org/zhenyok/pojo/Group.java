@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Group {
+    public static List<Group> groups = Collections.synchronizedList(new ArrayList<>());
     private final String name;
     private final List<Product> products;
-    public static List<Group> groups = Collections.synchronizedList(new ArrayList<>());
 
     public Group(String name, List<Product> products) {
         this.name = name;
@@ -19,15 +19,19 @@ public class Group {
     }
 
     public List<Product> getProducts() {
-        return products;
+        synchronized (products) {
+            return new ArrayList<>(products);
+        }
     }
 
     public void addProduct(Product product) {
-        products.add(product);
+        synchronized (products) {
+            products.add(product);
+        }
     }
 
     @Override
     public String toString() {
-         return name;
+        return name;
     }
 }

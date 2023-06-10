@@ -1,16 +1,15 @@
 package org.zhenyok.pojo;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class Message {
     private final int cType;
     private final int bUserId;
-    private byte[] messageBytes;
     private final int command;
     private final int count;
     private final double price;
     private final byte[] dataBytes;
+    private byte[] messageBytes;
 
     public Message(int cType, int bUserId, byte[] messageBytes, int command, int count, double price, byte[] dataBytes) {
         this.cType = cType;
@@ -28,10 +27,6 @@ public class Message {
         byteBuffer.get(dataBytes, 0, dataLength);
     }
 
-    public void setMessageBytes(byte[] messageBytes) {
-        this.messageBytes = messageBytes;
-    }
-
     public int getCType() {
         return cType;
     }
@@ -42,6 +37,10 @@ public class Message {
 
     public byte[] getMessageBytes() {
         return messageBytes;
+    }
+
+    public synchronized void setMessageBytes(byte[] messageBytes) {
+        this.messageBytes = messageBytes;
     }
 
     public int getCommand() {
@@ -59,7 +58,6 @@ public class Message {
     public byte[] getDataBytes() {
         return dataBytes;
     }
-
 
     @Override
     public String toString() {
