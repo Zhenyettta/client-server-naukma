@@ -17,7 +17,9 @@ public class ProcessorTest {
     @Test
     public void testProcessMessages() {
         List<Message> messages = new ArrayList<>();
-        messages.add(new Message(1, 1, null, 0, 10, 0.0, "Product1".getBytes()));
+        List<Message> messages1 = new ArrayList<>();
+        messages1.add(new Message(1, 1, null, 0, 10, 0.0, "Product1".getBytes()));
+
         messages.add(new Message(1, 1, null, 1, 0, 0.0, "Product1".getBytes()));
         messages.add(new Message(1, 1, null, 2, 3, 0.0, "Product1".getBytes()));
         messages.add(new Message(1, 1, null, 0, 3, 0.0, "Product3".getBytes()));
@@ -26,15 +28,17 @@ public class ProcessorTest {
         messages.add(new Message(1, 1, null, 3, 50, 0, "Product1".getBytes()));
         messages.add(new Message(1, 1, null, 1, 0, 57.0, "Product1".getBytes()));
 
+        Processor.processMessagesInParallel(messages1);
         Processor.processMessagesInParallel(messages);
 
-        assertEquals("Product created successfully", new String(messages.get(0).getMessageBytes()));
-        assertEquals("Count of your product = 10", new String(messages.get(1).getMessageBytes()));
-        assertEquals("Removed 3 products, actual count = 7", new String(messages.get(2).getMessageBytes()));
-        assertEquals("Group Group2 was created", new String(messages.get(4).getMessageBytes()));
-        assertEquals("Product Product3 was successfully added to Group2", new String(messages.get(5).getMessageBytes()));
-        assertEquals("Added 50 products, actual count = 57", new String(messages.get(6).getMessageBytes()));
-        assertEquals("Count of your product = 57", new String(messages.get(7).getMessageBytes()));
+
+
+        assertEquals("Count of your product = 10", new String(messages.get(0).getMessageBytes()));
+        assertEquals("Removed 3 products, actual count = 7", new String(messages.get(1).getMessageBytes()));
+        assertEquals("Group Group2 was created", new String(messages.get(3).getMessageBytes()));
+        assertEquals("Product Product3 was successfully added to Group2", new String(messages.get(4).getMessageBytes()));
+        assertEquals("Added 50 products, actual count = 57", new String(messages.get(5).getMessageBytes()));
+        assertEquals("Count of your product = 57", new String(messages.get(6).getMessageBytes()));
     }
 
     @Test

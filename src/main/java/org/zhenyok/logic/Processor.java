@@ -7,8 +7,7 @@ import org.zhenyok.pojo.Product;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -175,10 +174,22 @@ public class Processor {
     }
 
     public static void processMessagesInParallel(List<Message> messages) {
-        try (ExecutorService executorService = Executors.newCachedThreadPool()) {
+        CompletionService<Void> completionService = new ExecutorCompletionService<>(Executors.newCachedThreadPool());
+
             for (Message message : messages) {
-                executorService.execute(() -> process(message));
+                completionService.submit(() -> {
+                    process(message);
+                    return null;
+                });
             }
-        }
+
+            for (int i = 0; i < messages.size(); i++) {
+                try {
+                    completionService.take().get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+
     }
 }
