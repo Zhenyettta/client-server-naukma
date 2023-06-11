@@ -16,6 +16,7 @@ public class Processor {
     private static final Lock productLock = new ReentrantLock();
 
     public static void process(Message message) {
+        productLock.lock();
         int command = message.getCommand();
         switch (command) {
             case 0:
@@ -46,6 +47,7 @@ public class Processor {
                 changeProductPrice(message);
                 break;
         }
+        productLock.unlock();
     }
 
     private static void createProduct(Message message) {
