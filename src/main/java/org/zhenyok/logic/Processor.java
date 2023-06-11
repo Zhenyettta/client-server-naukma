@@ -192,6 +192,15 @@ public class Processor {
                     e.printStackTrace();
                 }
             }
+//Реальний багатопотік
+//        try (ExecutorService service = Executors.newCachedThreadPool() // Executors.newVirtualThreadPerTaskExecutor()) {
+//            for (Message message : messages) {
+//                service.execute(() -> {
+//                    process(message);
+//
+//                });
+//            }
+//        }
 
     }
 }
