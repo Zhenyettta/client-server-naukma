@@ -26,9 +26,7 @@ public class ProcessorTest {
         messages.add(new Message(1, 1, null, 3, 50, 0, "Product1".getBytes()));
         messages.add(new Message(1, 1, null, 1, 0, 57.0, "Product1".getBytes()));
 
-        for (Message message : messages) {
-            Processor.process(message);
-        }
+        Processor.processMessagesInParallel(messages);
 
         assertEquals("Product created successfully", new String(messages.get(0).getMessageBytes()));
         assertEquals("Count of your product = 10", new String(messages.get(1).getMessageBytes()));

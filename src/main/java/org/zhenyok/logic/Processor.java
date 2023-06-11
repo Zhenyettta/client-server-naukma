@@ -50,74 +50,78 @@ public class Processor {
     }
 
     private static void createProduct(Message message) {
-        System.out.println("CREATE");
         productLock.lock();
-        try {
-            Product product = new Product(new String(message.getDataBytes()), message.getCount(), message.getPrice(), null);
-            Product.products.add(product);
-            message.setMessageBytes("Product created successfully".getBytes());
-        } finally {
-            productLock.unlock();
-        }
+        System.out.println("CREATE");
+        Product product = new Product(new String(message.getDataBytes()), message.getCount(), message.getPrice(), null);
+        Product.products.add(product);
+        message.setMessageBytes("Product created successfully".getBytes());
+        productLock.unlock();
     }
 
     private static void getProductCount(Message message) {
+        productLock.lock();
         System.out.println("GET");
         Product product = getProductByName(new String(message.getDataBytes()));
 
         if (product != null) {
             int count = product.getCount();
             message.setMessageBytes(("Count of your product = " + count).getBytes());
+            productLock.unlock();
         } else {
             message.setMessageBytes("Product not found".getBytes());
+            productLock.unlock();
         }
     }
 
     private static void removeProduct(Message message) {
+        productLock.lock();
         System.out.println("REMOVE");
         Product product = getProductByName(new String(message.getDataBytes()));
 
         if (product != null) {
-            productLock.lock();
-            try {
-                int countToRemove = message.getCount();
-                int currentCount = product.getCount();
-                int newCount = Math.max(currentCount - countToRemove, 0);
-                int removedCount = currentCount - newCount;
-                product.setCount(newCount);
-                message.setMessageBytes(("Removed " + removedCount + " products, actual count = " + newCount).getBytes());
-            } finally {
-                productLock.unlock();
-            }
+
+            int countToRemove = message.getCount();
+            int currentCount = product.getCount();
+            int newCount = Math.max(currentCount - countToRemove, 0);
+            int removedCount = currentCount - newCount;
+            product.setCount(newCount);
+            message.setMessageBytes(("Removed " + removedCount + " products, actual count = " + newCount).getBytes());
+            productLock.unlock();
+
         } else {
             message.setMessageBytes("Product not found".getBytes());
+            productLock.unlock();
         }
     }
 
     private static void addProduct(Message message) {
+        productLock.lock();
         System.out.println("ADD");
         Product product = getProductByName(new String(message.getDataBytes()));
 
         if (product != null) {
-            productLock.lock();
-            try {
-                product.setCount(product.getCount() + message.getCount());
-                message.setMessageBytes(("Added " + message.getCount() + " products, actual count = " + product.getCount()).getBytes());
-            } finally {
-                productLock.unlock();
-            }
+
+            product.setCount(product.getCount() + message.getCount());
+            message.setMessageBytes(("Added " + message.getCount() + " products, actual count = " + product.getCount()).getBytes());
+
+            productLock.unlock();
+
         } else {
             message.setMessageBytes("Product not found".getBytes());
+            productLock.unlock();
         }
     }
 
     private static void createGroup(Message message) {
+        productLock.lock();
         Group group = new Group(new String(message.getDataBytes()), Collections.synchronizedList(new ArrayList<>()));
         Group.groups.add(group);
         message.setMessageBytes(("Group " + new String(message.getDataBytes()) + " was created").getBytes());
+        productLock.unlock();
     }
 
     private static void addProductToGroup(Message message) {
+        productLock.lock();
         String[] data = new String(message.getDataBytes()).split(" ");
         String productName = data[0];
         String groupName = data[1];
@@ -132,12 +136,15 @@ public class Processor {
             }
 
             message.setMessageBytes(("Product " + productName + " was successfully added to " + groupName).getBytes());
+            productLock.unlock();
         } else {
             message.setMessageBytes("Product or group not found".getBytes());
+            productLock.unlock();
         }
     }
 
     private static void changeProductPrice(Message message) {
+        productLock.lock();
         Product product = getProductByName(new String(message.getDataBytes()));
 
         if (product != null) {
@@ -146,8 +153,10 @@ public class Processor {
             }
 
             message.setMessageBytes(("Price of product " + new String(message.getDataBytes()) + " was changed to " + product.getPrice()).getBytes());
+            productLock.unlock();
         } else {
             message.setMessageBytes("Product not found".getBytes());
+            productLock.unlock();
         }
     }
 
