@@ -18,7 +18,7 @@ public class Decryptor {
     public static List<Message> decode(List<Package> packages) {
         List<Message> decodedMessages = Collections.synchronizedList(new ArrayList<>());
 
-        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
+        try (ExecutorService executorService = Executors.newCachedThreadPool()) {
             for (Package pack : packages) {
                 executorService.execute(() -> {
                     Message message = decode(pack);

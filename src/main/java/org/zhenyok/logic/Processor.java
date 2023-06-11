@@ -175,7 +175,7 @@ public class Processor {
     }
 
     public static void processMessagesInParallel(List<Message> messages) {
-        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
+        try (ExecutorService executorService = Executors.newCachedThreadPool()) {
             for (Message message : messages) {
                 executorService.execute(() -> process(message));
             }

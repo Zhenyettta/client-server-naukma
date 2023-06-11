@@ -16,7 +16,7 @@ public class Encryptor {
     public static List<byte[]> encode(List<Message> messages) {
         List<byte[]> encodedPackages = new ArrayList<>();
 
-        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
+        try (ExecutorService executorService = Executors.newCachedThreadPool()) {
             for (Message message : messages) {
                 executorService.execute(() -> {
                     byte[] encodedMessage = encodePackage(message);
