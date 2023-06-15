@@ -21,7 +21,7 @@ public class Decryptor {
         try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
             for (Package pack : packages) {
                 executorService.execute(() -> {
-                    Message message = decode(pack);
+                    Message message = decode(pack.packageBytes());
                     if (message != null) {
                         decodedMessages.add(message);
                     }
@@ -32,9 +32,9 @@ public class Decryptor {
         return decodedMessages;
     }
 
-    public static Message decode(Package pack) {
+    public static Message decode(byte[] pack) {
         try {
-            ByteBuffer wrap = ByteBuffer.wrap(pack.packageBytes());
+            ByteBuffer wrap = ByteBuffer.wrap(pack);
             byte clientId = wrap.get(1);
             long packetId = wrap.getLong(2);
             int textLength = wrap.getInt(10);

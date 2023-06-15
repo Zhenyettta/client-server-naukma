@@ -45,7 +45,7 @@ public class CRC16 {
             crc = (crc >>> 8) ^ table[(crc ^ b) & 0xff];
         }
 
-        System.out.println(("CRC16 = " + (short) crc));
+
 
         return (short) crc;
     }

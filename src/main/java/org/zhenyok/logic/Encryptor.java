@@ -27,6 +27,22 @@ public class Encryptor {
 
         return encodedPackages;
     }
+    public static byte[] encode(Message message) {
+        List<byte[]> encodedPackages = new ArrayList<>();
+
+        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
+
+                executorService.execute(() -> {
+                    byte[] encodedMessage = encodePackage(message);
+                    encodedPackages.add(encodedMessage);
+                });
+
+        }
+
+        return encodedPackages.get(0);
+    }
+
+
 
     private static byte[] encodePackage(Message message) {
         try {

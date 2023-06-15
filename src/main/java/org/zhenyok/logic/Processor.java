@@ -6,7 +6,6 @@ import org.zhenyok.pojo.Product;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
@@ -50,19 +49,21 @@ public class Processor {
     }
 
     private static void createProduct(Message message) {
-        System.out.println("CREATE");
         productLock.lock();
         try {
-            Product product = new Product(new String(message.getDataBytes()), message.getCount(), message.getPrice(), null);
-            Product.products.add(product);
-            message.setMessageBytes("Product created successfully".getBytes());
+            if (getProductByName(new String(message.getDataBytes())) == null) {
+                Product product = new Product(new String(message.getDataBytes()), message.getCount(), message.getPrice(), null);
+                Product.products.add(product);
+                message.setMessageBytes("Product created successfully".getBytes());
+            } else {
+                message.setMessageBytes("Product with this name already exists".getBytes());
+            }
         } finally {
             productLock.unlock();
         }
     }
 
     private static void getProductCount(Message message) {
-        System.out.println("GET");
         Product product = getProductByName(new String(message.getDataBytes()));
 
         if (product != null) {
@@ -74,7 +75,6 @@ public class Processor {
     }
 
     private static void removeProduct(Message message) {
-        System.out.println("REMOVE");
         Product product = getProductByName(new String(message.getDataBytes()));
 
         if (product != null) {
@@ -95,7 +95,7 @@ public class Processor {
     }
 
     private static void addProduct(Message message) {
-        System.out.println("ADD");
+
         Product product = getProductByName(new String(message.getDataBytes()));
 
         if (product != null) {
@@ -112,9 +112,12 @@ public class Processor {
     }
 
     private static void createGroup(Message message) {
-        Group group = new Group(new String(message.getDataBytes()), Collections.synchronizedList(new ArrayList<>()));
-        Group.groups.add(group);
-        message.setMessageBytes(("Group " + new String(message.getDataBytes()) + " was created").getBytes());
+        if (getGroupByName(new String(message.getDataBytes())) == null) {
+            Group group = new Group(new String(message.getDataBytes()), Collections.synchronizedList(new ArrayList<>()));
+            Group.groups.add(group);
+            message.setMessageBytes(("Group " + new String(message.getDataBytes()) + " was created").getBytes());
+        } else
+            message.setMessageBytes("Group with this name already exists".getBytes());
     }
 
     private static void addProductToGroup(Message message) {
@@ -125,7 +128,7 @@ public class Processor {
         Product product = getProductByName(productName);
         Group group = getGroupByName(groupName);
 
-        if (product != null && group != null) {
+        if (group != null && !group.getProducts().contains(product) && product != null) {
             synchronized (group) {
                 group.addProduct(product);
                 product.setGroup(group);
@@ -133,7 +136,7 @@ public class Processor {
 
             message.setMessageBytes(("Product " + productName + " was successfully added to " + groupName).getBytes());
         } else {
-            message.setMessageBytes("Product or group not found".getBytes());
+            message.setMessageBytes("Product or group not found or product already in this group".getBytes());
         }
     }
 
@@ -165,11 +168,11 @@ public class Processor {
                 .orElse(null);
     }
 
-    public static void processMessagesInParallel(List<Message> messages) {
-        try (ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS)) {
-            for (Message message : messages) {
-                executorService.execute(() -> process(message));
-            }
+    public static void processMessagesInParallel(Message message) {
+        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
+            service.execute(() -> process(message));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
