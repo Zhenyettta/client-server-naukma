@@ -1,3 +1,3 @@
 # client-server-naukma
 
-![akulagigachad.png](akulagigachad.png)
+![crypt.jpg](crypt.jpg)

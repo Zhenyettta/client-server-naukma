@@ -1,0 +1,250 @@
+package org.zhenyok.database;
+
+import org.zhenyok.pojo.Group;
+import org.zhenyok.pojo.Product;
+
+import java.sql.*;
+import java.util.Properties;
+
+public class DatabaseHandler extends Const {
+    private Connection dbConnection;
+
+    public static void main(String[] args) throws SQLException {
+        DatabaseHandler handler = new DatabaseHandler();
+        handler.getConnection();
+    }
+
+    public Connection getConnection() throws SQLException {
+        if (dbConnection != null && !dbConnection.isClosed()) {
+            return dbConnection;
+        }
+
+        Properties props = new Properties();
+        props.setProperty("user", "postgres");
+        props.setProperty("password", "Lyalyalyalya1+");
+        String url = "jdbc:postgresql://localhost/ClientServer";
+        dbConnection = DriverManager.getConnection(url, props);
+        return dbConnection;
+    }
+
+    public void createProduct(Product product) {
+        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price) VALUES (?, ?, ?)";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, product.getName());
+            statement.setInt(2, product.getCount());
+            statement.setDouble(3, product.getPrice());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void createGroup(Group group) {
+        String query = "INSERT INTO " + GROUPS_TABLE + "(name) VALUES (?)";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, group.getName());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getProductCount(String name) {
+        String query = "SELECT count FROM " + PRODUCTS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("count");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
+    public int getProductPrice(String name) {
+        String query = "SELECT price FROM " + PRODUCTS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("price");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
+    public boolean checkProductByName(String name) {
+        String query = "SELECT COUNT(*) FROM " + PRODUCTS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    public Product getProduct(String name) {
+        String query = "SELECT p.count, p.price, p.group_id, g.name " +
+                "FROM " + PRODUCTS_TABLE + " p LEFT JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id " +
+                "WHERE p.name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt("count");
+                    int price = resultSet.getInt("price");
+                    int groupId = resultSet.getInt("group_id");
+                    String groupName = resultSet.getString("name");
+
+                    Group group = groupId == 0 ? null : new Group(groupName);
+                    return new Product(name, count, price, group);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public boolean setCount(String name, int count) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET count = ? WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, count);
+            statement.setString(2, name);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean checkGroupByName(String name) {
+        String query = "SELECT COUNT(*) FROM " + GROUPS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    public Group getGroup(String name) {
+        String query = "SELECT name " + "FROM " + GROUPS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String groupName = resultSet.getString("name");
+
+                    return new Group(groupName);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public boolean setGroup(String productName, String groupName) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET group_id = (SELECT id FROM " + GROUPS_TABLE + " WHERE name = ?) WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, groupName);
+            statement.setString(2, productName);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean setPrice(String name, double price) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET price = ? WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setDouble(1, price);
+            statement.setString(2, name);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean removeProduct(String name) {
+        String query = "DELETE FROM " + PRODUCTS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getGroupByProdName(String name) {
+        String query = "SELECT g.name FROM " + GROUPS_TABLE + " g JOIN " + PRODUCTS_TABLE + " p ON g.id = group_id WHERE p.name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            ResultSet set = statement.executeQuery();
+            if (set.next()) {
+                return set.getString(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public String sort(String sortingCriteria) {
+        String query = "SELECT name, count, price FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            ResultSet set = statement.executeQuery();
+            StringBuilder builder = new StringBuilder();
+            while (set.next()) {
+                String productName = set.getString("name");
+                int count = set.getInt("count");
+                double price = set.getDouble("price");
+                builder.append("Product Name: ").append(productName)
+                        .append(", Count: ").append(count)
+                        .append(", Price: ").append(price)
+                        .append("\n");
+            }
+            return builder.toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+
+
+

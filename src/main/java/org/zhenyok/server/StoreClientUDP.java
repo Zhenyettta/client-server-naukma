@@ -1,5 +1,7 @@
-package org.zhenyok.logic;
+package org.zhenyok.server;
 
+import org.zhenyok.logic.Decryptor;
+import org.zhenyok.logic.Encryptor;
 import org.zhenyok.pojo.Message;
 import org.zhenyok.pojo.Package;
 
@@ -61,14 +63,14 @@ public class StoreClientUDP extends Thread {
 
     public Message[] getMessagesToSend() {
         Message[] messages = {
-                new Message(1, 1, "boba".getBytes(), 0, 10, 0.0, "Product1".getBytes()),
-                new Message(1, 1, "boba".getBytes(), 1, 10, 0.0, "Product1".getBytes()),
-                new Message(1, 1, "boba".getBytes(), 2, 3, 0.0, "Product1".getBytes()),
-                new Message(1, 1, "boba".getBytes(), 0, 3, 0.0, "Product3".getBytes()),
-                new Message(1, 1, "boba".getBytes(), 4, 0, 0.0, "Group2".getBytes()),
-                new Message(1, 1, "boba".getBytes(), 5, 0, 0.0, "Product3 Group2".getBytes()),
-                new Message(1, 1, "boba".getBytes(), 3, 50, 0, "Product1".getBytes()),
-                new Message(1, 1, "boba".getBytes(), 1, 0, 57.0, "Product1".getBytes())
+                new Message(1, 1, "Product1".getBytes(), 0, 10, 0.0),
+                new Message(1, 1, "Product1".getBytes(), 1, 10, 0.0),
+                new Message(1, 1, "Product1".getBytes(), 2, 3, 0.0),
+                new Message(1, 1, "Product1".getBytes(), 0, 3, 0.0),
+                new Message(1, 1, "Product1".getBytes(), 4, 0, 0.0),
+                new Message(1, 1, "Product1".getBytes(), 5, 0, 0.0),
+                new Message(1, 1, "Product1".getBytes(), 3, 50, 0),
+                new Message(1, 1, "Product1".getBytes(), 1, 0, 57.0)
         };
         return messages;
     }

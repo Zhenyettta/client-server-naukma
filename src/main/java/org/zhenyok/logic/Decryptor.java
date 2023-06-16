@@ -38,7 +38,6 @@ public class Decryptor {
             byte clientId = wrap.get(1);
             long packetId = wrap.getLong(2);
             int textLength = wrap.getInt(10);
-            int dataLength = wrap.getInt(14);
             short firstCrc16 = wrap.getShort(18);
 
 
@@ -47,7 +46,6 @@ public class Decryptor {
                     .put(clientId)
                     .putLong(packetId)
                     .putInt(textLength)
-                    .putInt(dataLength)
                     .array();
 
             if (CRC16.crcEncode(bytes) != firstCrc16) {
@@ -58,7 +56,6 @@ public class Decryptor {
             int cType = wrap.getInt(20);
             int bUserId = wrap.getInt(24);
             byte[] decryptedMessage = new byte[textLength];
-            byte[] decryptedData = new byte[dataLength];
 
             wrap.get(28, decryptedMessage);
 
@@ -66,12 +63,12 @@ public class Decryptor {
             int count = wrap.getInt(32 + textLength);
             double price = wrap.getDouble(36 + textLength);
 
-            wrap.get(44 + textLength, decryptedData);
+
 
             byte[] resMessage = MyCipher.decrypt(decryptedMessage);
-            byte[] resData = MyCipher.decrypt(decryptedData);
 
-            return new Message(cType, bUserId, resMessage, command, count, price, resData);
+
+            return new Message(cType, bUserId, resMessage, command, count, price);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

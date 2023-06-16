@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Product {
-    public static List<Product> products = Collections.synchronizedList(new ArrayList<>());
+
     private final String name;
     private volatile int count;
     private volatile double price;
@@ -18,9 +18,7 @@ public class Product {
         this.group = group;
     }
 
-    public static void setProducts(List<Product> products) {
-        Product.products = products;
-    }
+
 
     public String getName() {
         return name;

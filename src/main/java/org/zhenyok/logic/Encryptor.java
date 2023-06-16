@@ -47,26 +47,24 @@ public class Encryptor {
     private static byte[] encodePackage(Message message) {
         try {
             byte[] encodedText = MyCipher.encrypt(message.getMessageBytes());
-            byte[] encodedData = MyCipher.encrypt(message.getDataBytes());
+
             int textLength = encodedText.length;
-            int dataLength = encodedData.length;
+
 
             byte[] bytes = ByteBuffer.allocate(18)
                     .put((byte) 0x13)
                     .put((byte) 1)
                     .putLong(10)
                     .putInt(textLength)
-                    .putInt(dataLength)
                     .array();
 
-            ByteBuffer encodedMessageBuffer = ByteBuffer.allocate(24 + textLength + dataLength)
+            ByteBuffer encodedMessageBuffer = ByteBuffer.allocate(24 + textLength)
                     .putInt(message.getCType())
                     .putInt(message.getBUserId())
                     .put(encodedText)
                     .putInt(message.getCommand())
                     .putInt(message.getCount())
-                    .putDouble(message.getPrice())
-                    .put(encodedData);
+                    .putDouble(message.getPrice());
 
             byte[] encodedMessage = encodedMessageBuffer.array();
 

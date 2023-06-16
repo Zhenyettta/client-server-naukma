@@ -1,4 +1,4 @@
-package org.zhenyok.logic;
+package org.zhenyok.server;
 
 import org.zhenyok.pojo.Message;
 import org.zhenyok.pojo.Package;

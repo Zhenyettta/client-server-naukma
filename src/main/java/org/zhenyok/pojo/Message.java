@@ -8,23 +8,23 @@ public class Message {
     private final int command;
     private final int count;
     private final double price;
-    private final byte[] dataBytes;
+
     private byte[] messageBytes;
 
-    public Message(int cType, int bUserId, byte[] messageBytes, int command, int count, double price, byte[] dataBytes) {
+    public Message(int cType, int bUserId, byte[] messageBytes, int command, int count, double price) {
         this.cType = cType;
         this.bUserId = bUserId;
         this.messageBytes = messageBytes;
         this.command = command;
         this.count = count;
         this.price = price;
-        this.dataBytes = dataBytes;
+
     }
 
     public Message(ByteBuffer byteBuffer, int textLength, int dataLength) {
-        this(byteBuffer.getInt(20), byteBuffer.getInt(24), new byte[textLength], byteBuffer.getInt(24 + textLength), byteBuffer.getInt(28 + textLength), byteBuffer.getDouble(32 + textLength), new byte[dataLength]);
+        this(byteBuffer.getInt(20), byteBuffer.getInt(24), new byte[textLength], byteBuffer.getInt(24 + textLength), byteBuffer.getInt(28 + textLength), byteBuffer.getDouble(32 + textLength));
         byteBuffer.get(messageBytes, 0, textLength);
-        byteBuffer.get(dataBytes, 0, dataLength);
+
     }
 
     public int getCType() {
@@ -55,9 +55,7 @@ public class Message {
         return price;
     }
 
-    public byte[] getDataBytes() {
-        return dataBytes;
-    }
+
 
     @Override
     public String toString() {
@@ -68,7 +66,6 @@ public class Message {
                 ", command=" + command +
                 ", count=" + count +
                 ", price=" + price +
-                ", dataBytes=" + new String(dataBytes) +
                 '}';
     }
 }

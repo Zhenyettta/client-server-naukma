@@ -1,5 +1,8 @@
-package org.zhenyok.logic;
+package org.zhenyok.server;
 
+import org.zhenyok.logic.Decryptor;
+import org.zhenyok.logic.Encryptor;
+import org.zhenyok.logic.Processor;
 import org.zhenyok.pojo.Message;
 import org.zhenyok.pojo.Package;
 
@@ -13,6 +16,10 @@ import java.nio.ByteBuffer;
 public class StoreServerTCP {
 
     private static final int SERVER_PORT = 5000;
+
+    public StoreServerTCP() {
+        this.start();
+    }
 
     public static void main(String[] args) {
         StoreServerTCP server = new StoreServerTCP();
@@ -50,7 +57,6 @@ public class StoreServerTCP {
                         Message message = Decryptor.decode(pckg);
                         Processor.processMessagesInParallel(message);
                         Package responsePackage = Package.createPackage(ByteBuffer.wrap(Encryptor.encode(message)));
-
                         synchronized (output) {
                             output.writeInt(responsePackage.packageBytes().length);
                             output.write(responsePackage.packageBytes());
@@ -61,6 +67,7 @@ public class StoreServerTCP {
                     }
                 }
             } catch (IOException e) {
+
                 System.out.println(clientSocket.getPort() + " closed connection");
             } finally {
                 try {
