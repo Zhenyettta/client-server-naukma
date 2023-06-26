@@ -31,9 +31,9 @@ public class MyServer {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         HttpContext products = server.createContext("/", new MyHandler());
-        HttpContext login = server.createContext("/login", new LoginHandler());
+//        HttpContext login = server.createContext("/login", new LoginHandler());
 
-        products.setAuthenticator(new Auth());
+//        products.setAuthenticator(new Auth());
         server.setExecutor(null);
         server.start();
     }
@@ -46,7 +46,7 @@ public class MyServer {
             String path = exchange.getRequestURI().getPath();
             System.out.println(path);
             if (path.startsWith("/api/good")) {
-                String method = exchange.getRequestMethod();
+                String method = exchange.getRequestMethod().toLowerCase();
                 if (method.equals("get")) {
                     handleGetRequest(path, exchange);
                 } else if (method.equals("put")) {
@@ -180,11 +180,8 @@ public class MyServer {
 
                 String login = jsonBody.getString("login");
                 String password = jsonBody.getString("password");
-                System.out.println("boba1");
                 if (login.equals(USERNAME) && password.equals(PASSWORD)) {
-                    System.out.println("boba");
                     String token = generateToken(login);
-                    System.out.println("boba2");
                     JSONObject responseJson = new JSONObject();
                     responseJson.put("token", token);
 
