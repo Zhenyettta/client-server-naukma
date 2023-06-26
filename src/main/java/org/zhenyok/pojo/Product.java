@@ -1,10 +1,13 @@
 package org.zhenyok.pojo;
 
+import com.sun.source.doctree.SerialDataTree;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Product {
+public class Product implements Serializable {
 
     private final String name;
     private volatile int count;

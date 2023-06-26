@@ -22,22 +22,30 @@ public class DatabaseHandler extends Const {
         Properties props = new Properties();
         props.setProperty("user", "postgres");
         props.setProperty("password", "Lyalyalyalya1+");
-        String url = "jdbc:postgresql://localhost/ClientServer";
+        String url = "jdbc:postgresql://localhost:1488/ClientServer";
         dbConnection = DriverManager.getConnection(url, props);
         return dbConnection;
     }
 
-    public void createProduct(Product product) {
-        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price) VALUES (?, ?, ?)";
+    public int createProduct(Product product) {
+        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price) VALUES (?, ?, ?) RETURNING id";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, product.getName());
             statement.setInt(2, product.getCount());
             statement.setDouble(3, product.getPrice());
-            statement.executeUpdate();
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+
+        return 0;
     }
 
     public void createGroup(Group group) {
@@ -123,12 +131,50 @@ public class DatabaseHandler extends Const {
         return null;
     }
 
-    public boolean setCount(String name, int count) {
-        String query = "UPDATE " + PRODUCTS_TABLE + " SET count = ? WHERE name = ?";
+    public Product getProductById(int id) {
+        String query = "SELECT p.name, p.count, p.price, p.group_id, g.name " +
+                "FROM " + PRODUCTS_TABLE + " p LEFT JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id " +
+                "WHERE p.id = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    int count = resultSet.getInt("count");
+                    int price = resultSet.getInt("price");
+                    int groupId = resultSet.getInt("group_id");
+                    String groupName = resultSet.getString("name");
+
+                    Group group = groupId == 0 ? null : new Group(groupName);
+                    return new Product(name, count, price, group);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public boolean setName(int id, String name) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET name = ? WHERE id = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            statement.setInt(2, id);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean setCount(int id, int count) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET count = ? WHERE id = ?";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, count);
-            statement.setString(2, name);
+            statement.setInt(2, id);
             int rows = statement.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
@@ -170,12 +216,12 @@ public class DatabaseHandler extends Const {
         return null;
     }
 
-    public boolean setGroup(String productName, String groupName) {
-        String query = "UPDATE " + PRODUCTS_TABLE + " SET group_id = (SELECT id FROM " + GROUPS_TABLE + " WHERE name = ?) WHERE name = ?";
+    public boolean setGroup(int id, String groupName) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET group_id = (SELECT id FROM " + GROUPS_TABLE + " WHERE name = ?) WHERE id = ?";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, groupName);
-            statement.setString(2, productName);
+            statement.setInt(2, id);
             int rows = statement.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
@@ -183,12 +229,12 @@ public class DatabaseHandler extends Const {
         }
     }
 
-    public boolean setPrice(String name, double price) {
-        String query = "UPDATE " + PRODUCTS_TABLE + " SET price = ? WHERE name = ?";
+    public boolean setPrice(int id, double price) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET price = ? WHERE id = ?";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setDouble(1, price);
-            statement.setString(2, name);
+            statement.setInt(2, id);
             int rows = statement.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
