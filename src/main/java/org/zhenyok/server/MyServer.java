@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
 
+import static org.zhenyok.server.MyServer.MyHandler.getBody;
+
 public class MyServer {
     private static final int STATUS_OK = 200;
     private static final int STATUS_CREATED = 201;
@@ -51,19 +53,16 @@ public class MyServer {
             exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
             String path = exchange.getRequestURI().getPath();
-
+            System.out.println("category");
             if (path.startsWith("/api/categories")) {
                 String method = exchange.getRequestMethod().toLowerCase();
                 if (method.equals("post")) {
                     System.out.println("updating");
-                }
-                else if (method.equals("get")){
+                } else if (method.equals("get")) {
                     handleGetRequestCategory(path, exchange);
-                }
-                else if (method.equals("put")) {
-                    System.out.println("creating");
-                }
-                else if (method.equals("delete")) {
+                } else if (method.equals("put")) {
+                    handlePutRequestCategory(path, exchange);
+                } else if (method.equals("delete")) {
                     System.out.println("deleting");
                 }
             } else {
@@ -80,6 +79,16 @@ public class MyServer {
                 JSONArray jo = new JSONArray(categories);
                 sendResponse(jo.toString(1), STATUS_OK, exchange);
             }
+        }
+
+        private void handlePutRequestCategory(String path, HttpExchange exchange) throws IOException {
+            String values = getBody(exchange);
+            JSONObject jsonBody = new JSONObject(values);
+            String name = jsonBody.getString("name");
+            Group group = new Group(name);
+            db.createGroup(group);
+            sendResponse("", STATUS_NO_CONTENT, exchange);
+
         }
     }
 
@@ -226,7 +235,7 @@ public class MyServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (exchange.getRequestURI().getPath().startsWith("/login")) {
-                String body = MyHandler.getBody(exchange);
+                String body = getBody(exchange);
                 JSONObject jsonBody = new JSONObject(body);
 
                 String login = jsonBody.getString("login");
@@ -270,16 +279,16 @@ public class MyServer {
         }
     }
 
-        private static void sendResponse(String str, int statusCode, HttpExchange exchange) throws IOException {
-            try {
-                exchange.sendResponseHeaders(statusCode, str.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(str.getBytes());
-                os.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private static void sendResponse(String str, int statusCode, HttpExchange exchange) throws IOException {
+        try {
+            exchange.sendResponseHeaders(statusCode, str.getBytes().length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(str.getBytes());
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
     static class Auth extends Authenticator {
         @Override
