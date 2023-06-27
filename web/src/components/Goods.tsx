@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Search from './FindGood.tsx';
 import ProdTable from './ProdTable.tsx';
 
 interface Item {
@@ -15,14 +14,16 @@ export default function Goods() {
     const [products, setProducts] = useState<Item[]>([]);
 
     const handleAddGood = () => {
-        const formWindow = window.open('', '_blank');K
+
+        const formWindow = window.open('', '_blank');
+        // @ts-ignore
         formWindow.document.write(`
             <html>
             <head>
-                <title>Add Good</title>
+                <title>Add Category</title>
                 <style>
                     body {
-                        font-family: 'Montserrat',serif;
+                        font-family: 'Montserrat', serif;
                     }
                     .form-container {
                         max-width: 400px;
@@ -55,26 +56,29 @@ export default function Goods() {
             </head>
             <body>
                 <div class="form-container">
-                    <h2>Add Good</h2>
+                    <h2>Add Category</h2>
                     <form>
-                        <label class="form-label" for="product-name">Product Name:</label>
-                        <input class="form-input" type="text" id="product-name" name="product-name" required>
-                        
-                        <label class="form-label" for="category-id">Group ID</label>
-                        <input class="form-input" type="text" id="category-id" name="category-id" required>
-                        
-                        <label class="form-label" for="price">Price</label>
+                        <label class="form-label" for="name">Name:</label>
+                        <input class="form-input" type="text" id="name" name="name" required>
+                         
+                         <label class="form-label" for="category">Category:</label>
+                        <input class="form-input" type="text" id="category" name="category" required>
+  
+                         <label class="form-label" for="price">Price:</label>
                         <input class="form-input" type="text" id="price" name="price" required>
                         
-                        <label class="form-label" for="amount">Amount</label>
+                        <label class="form-label" for="amount">Category Name:</label>
                         <input class="form-input" type="text" id="amount" name="amount" required>
-                        
+                                                                                              
                         <button class="form-button" type="submit">Submit</button>
                     </form>
                 </div>
             </body>
             </html>
+            
+            
         `);
+
     };
 
     useEffect(() => {
@@ -95,17 +99,12 @@ export default function Goods() {
             }
         };
 
+        // Fetch data when the component mounts
         fetchData();
     }, []);
 
     return (
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            <div className="relative flex items-center justify-between h-16">
-                <h1 className="text-black font-sans text-3xl">Goods</h1>
-            </div>
-            <div>
-                <Search />
-            </div>
             <div className="mt-8 mb-8">
                 <ProdTable products={products} />
             </div>

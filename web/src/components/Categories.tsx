@@ -1,14 +1,16 @@
 
 export default function Categories() {
     const handleAddCategory = () => {
+
         const formWindow = window.open('', '_blank');
+        // @ts-ignore
         formWindow.document.write(`
             <html>
             <head>
                 <title>Add Category</title>
                 <style>
                     body {
-                        font-family: 'Montserrat',serif;
+                        font-family: 'Montserrat', serif;
                     }
                     .form-container {
                         max-width: 400px;
@@ -51,7 +53,10 @@ export default function Categories() {
                 </div>
             </body>
             </html>
+            
+            
         `);
+
     };
 
     return (

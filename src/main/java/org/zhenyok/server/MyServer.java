@@ -33,12 +33,41 @@ public class MyServer {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         HttpContext products = server.createContext("/", new MyHandler());
+        HttpContext categories = server.createContext("/api/categories", new MyHandler());
 //        HttpContext login = server.createContext("/login", new LoginHandler());
 
 //        products.setAuthenticator(new Auth());
         server.setExecutor(null);
         server.start();
     }
+
+    static class CategoryHandler implements HttpHandler {
+        DatabaseHandler db = new DatabaseHandler();
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            String path = exchange.getRequestURI().getPath();
+
+            if (path.startsWith("/api/categories")) {
+                String method = exchange.getRequestMethod().toLowerCase();
+                if (method.equals("post")) {
+                    System.out.println("updating");
+                }
+                else if (method.equals("put")) {
+                    System.out.println("creating");
+                }
+                else if (method.equals("delete")) {
+                    System.out.println("deleting");
+                }
+            } else {
+                System.out.println("Invalid path");
+            }
+        }
+    }
+
 
     static class MyHandler implements HttpHandler {
         DatabaseHandler db = new DatabaseHandler();
