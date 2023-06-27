@@ -71,7 +71,7 @@ public class MyServer {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
             } else {
                 JSONObject jo = new JSONObject(product);
-                sendResponse("GETTING " + id + "\n" + jo.toString(1), STATUS_OK, exchange);
+                sendResponse(jo.toString(1), STATUS_OK, exchange);
             }
         }
 
