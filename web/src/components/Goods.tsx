@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Search from './FindGood.tsx';
 import ProdTable from './ProdTable.tsx';
 
 interface Item {
@@ -102,12 +103,12 @@ export default function Goods() {
             }
         };
 
-        // Fetch data when the component mounts
         fetchData();
     }, []);
 
     return (
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+
             <div className="mt-8 mb-8">
                 <ProdTable products={products} />
             </div>
