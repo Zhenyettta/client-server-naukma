@@ -1,7 +1,8 @@
+// prodtable.tsx
 import React from 'react';
 import { MDBDataTable } from 'mdbreact';
 
-public interface Item {
+interface Item {
     id: number;
     name: string;
     groupName: string;

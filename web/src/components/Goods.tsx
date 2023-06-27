@@ -1,7 +1,15 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Search from './Search.tsx';
 import ProdTable from './ProdTable.tsx';
+
+interface Item {
+    id: number;
+    name: string;
+    groupName: string;
+    quantity: number;
+    price: number;
+}
 
 export default function Goods() {
     const [users, setUsers] = useState<Item[]>([]);
@@ -9,12 +17,12 @@ export default function Goods() {
     useEffect(() => {
         axios
             .get('http://localhost:8000/api/good/1')
-            .then(response => {
+            .then((response) => {
                 const { price, name, count } = response.data;
-                const newData = { id: 1, name, groupName: '', quantity: count, price };
-                setUsers([...users, newData]);
+                const newData: Item = { id: 1, name, groupName: '', quantity: count, price };
+                setUsers((prevUsers) => [...prevUsers, newData]);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error fetching data:', error);
             });
     }, []);
