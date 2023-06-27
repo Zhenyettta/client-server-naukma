@@ -64,6 +64,7 @@ export default function Categories() {
                   <button class="form-button" type="submit">Submit</button>
               </form>
           </div>
+          
           <script>
             const form = document.getElementById('category-form');
             form.addEventListener('submit', async (e) => {

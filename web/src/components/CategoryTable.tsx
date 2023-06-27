@@ -25,6 +25,21 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                 field: 'name',
                 sort: 'asc',
                 width: 150,
+                attributes: {
+                    style: {
+                        textAlign: 'center',
+                    },
+                },
+            },
+            {
+                label: 'Actions',
+                field: 'actions',
+                width: 100,
+                attributes: {
+                    style: {
+                        textAlign: 'center',
+                    },
+                },
             },
         ],
         rows: categories.map((category) => ({

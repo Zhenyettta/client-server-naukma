@@ -16,7 +16,7 @@ interface ProdTableProps {
 const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
     const handleDelete = async (id: number) => {
         try {
-            const response = await fetch(`/api/good/${id}`, {
+            const response = await fetch(`http://localhost:8000/api/good/${id}`, {
                 method: 'DELETE',
             });
 
