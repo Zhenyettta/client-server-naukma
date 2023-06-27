@@ -52,7 +52,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
 
     return (
         <div>
-            <h1>Data Table</h1>
+            <h1>Products</h1>
             <MDBDataTableV5 data={data} />
         </div>
     );
