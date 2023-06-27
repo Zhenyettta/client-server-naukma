@@ -289,6 +289,24 @@ public class DatabaseHandler extends Const {
             throw new RuntimeException(e);
         }
     }
+
+    public ArrayList<Group> sortCategories(String sortingCriteria) {
+        String query = "SELECT name FROM " + GROUPS_TABLE + " ORDER BY " + sortingCriteria;
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            ResultSet set = statement.executeQuery();
+            ArrayList<Group> products = new ArrayList<>();
+            while (set.next()) {
+                String productName = set.getString("name");
+                Group product = new Group(productName);
+                products.add(product);
+            }
+            return products;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
 

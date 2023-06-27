@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.zhenyok.database.DatabaseHandler;
+import org.zhenyok.pojo.Group;
 import org.zhenyok.pojo.Product;
 
 import java.io.*;
@@ -33,7 +34,7 @@ public class MyServer {
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         HttpContext products = server.createContext("/", new MyHandler());
-        HttpContext categories = server.createContext("/api/categories", new MyHandler());
+        HttpContext categories = server.createContext("/api/categories", new CategoryHandler());
 //        HttpContext login = server.createContext("/login", new LoginHandler());
 
 //        products.setAuthenticator(new Auth());
@@ -56,6 +57,9 @@ public class MyServer {
                 if (method.equals("post")) {
                     System.out.println("updating");
                 }
+                else if (method.equals("get")){
+                    handleGetRequestCategory(path, exchange);
+                }
                 else if (method.equals("put")) {
                     System.out.println("creating");
                 }
@@ -64,6 +68,17 @@ public class MyServer {
                 }
             } else {
                 System.out.println("Invalid path");
+            }
+        }
+
+        public void handleGetRequestCategory(String path, HttpExchange exchange) throws IOException {
+            ArrayList<Group> categories = db.sortCategories("name");
+            System.out.println(categories);
+            if (categories == null) {
+                sendResponse("Category not found", STATUS_NOT_FOUND, exchange);
+            } else {
+                JSONArray jo = new JSONArray(categories);
+                sendResponse(jo.toString(1), STATUS_OK, exchange);
             }
         }
     }
@@ -106,6 +121,7 @@ public class MyServer {
                 sendResponse(jo.toString(1), STATUS_OK, exchange);
             }
         }
+
 
         private void handlePutRequest(HttpExchange exchange) throws IOException {
             String values = getBody(exchange);
