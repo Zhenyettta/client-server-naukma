@@ -16,7 +16,6 @@ export default function Goods() {
     const handleAddGood = () => {
 
         const formWindow = window.open('', '_blank');
-        // @ts-ignore
         formWindow.document.write(`
             <html>
             <head>

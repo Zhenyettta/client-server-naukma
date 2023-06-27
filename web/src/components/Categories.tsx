@@ -72,19 +72,16 @@ export default function Categories() {
               const data = { name: categoryName };
 
               try {
-                const response = await axios.put('http://localhost:8000/api/categories', data);
-                // Handle successful response
-                console.log('Category added:', response.data);
-                // Close the form window after successful submission
-                window.close();
+                  await axios.put('http://localhost:8000/api/categories', data);
+                  console.log('Category added successfully');
               } catch (error) {
-                console.error('Error adding category:', error);
+                  console.error('Error adding category:', error);
               }
-            });
-          </script>
-      </body>
-      </html>
-    `);
+          };
+      </script>
+  </body>
+  </html>
+`);
     };
 
     // Fetch categories data
