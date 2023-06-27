@@ -1,5 +1,4 @@
 import { Disclosure, Menu} from "@headlessui/react";
-import Logo from "./Logo.tsx";
 import { Link, useLocation } from "react-router-dom";
 
 
@@ -29,7 +28,6 @@ export default function NavigationBar() {
                             </div>
                             <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                                 <div className="flex-shrink-0 flex items-center">
-                                    <Logo/>
 
                                 </div>
                                 <div className="hidden sm:block sm:ml-6">
