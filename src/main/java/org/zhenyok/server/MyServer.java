@@ -198,7 +198,7 @@ public class MyServer {
             String id = UUID.randomUUID().toString().replace("-", "");
 
             Date now = new Date();
-            Date exp = new Date(System.currentTimeMillis() + (1000 * 30)); // 30 seconds
+            Date exp = new Date(System.currentTimeMillis() + (1000 * 3000));
 
             String token;
             try {
@@ -217,8 +217,9 @@ public class MyServer {
 
             return token;
         }
+    }
 
-        private void sendResponse(String str, int statusCode, HttpExchange exchange) throws IOException {
+        private static void sendResponse(String str, int statusCode, HttpExchange exchange) throws IOException {
             try {
                 exchange.sendResponseHeaders(statusCode, str.getBytes().length);
                 OutputStream os = exchange.getResponseBody();
@@ -228,7 +229,7 @@ public class MyServer {
                 e.printStackTrace();
             }
         }
-    }
+
     static class Auth extends Authenticator {
         @Override
         public Result authenticate(HttpExchange httpExchange) {
