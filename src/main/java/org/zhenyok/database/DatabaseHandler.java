@@ -21,8 +21,8 @@ public class DatabaseHandler extends Const {
 
         Properties props = new Properties();
         props.setProperty("user", "postgres");
-        props.setProperty("password", "Lyalyalyalya1+");
-        String url = "jdbc:postgresql://localhost:1488/ClientServer";
+        props.setProperty("password", "Np!ge83E3iiTKGM");
+        String url = "jdbc:postgresql://db.ieedqmagxkrupglowgom.supabase.co:5432/postgres"; //jdbc:postgresql://localhost:1488/ClientServer
         dbConnection = DriverManager.getConnection(url, props);
         return dbConnection;
     }
