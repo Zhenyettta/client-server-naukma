@@ -4,6 +4,7 @@ import org.zhenyok.pojo.Group;
 import org.zhenyok.pojo.Product;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class DatabaseHandler extends Const {
@@ -269,22 +270,21 @@ public class DatabaseHandler extends Const {
         return null;
     }
 
-    public String sort(String sortingCriteria) {
+    public ArrayList<Product> sort(String sortingCriteria) {
         String query = "SELECT name, count, price FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet set = statement.executeQuery();
-            StringBuilder builder = new StringBuilder();
+            ArrayList<Product> products = new ArrayList<>();
             while (set.next()) {
                 String productName = set.getString("name");
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
-                builder.append("Product Name: ").append(productName)
-                        .append(", Count: ").append(count)
-                        .append(", Price: ").append(price)
-                        .append("\n");
+                Product product = new Product(productName, count, price, null);
+                products.add(product);
             }
-            return builder.toString();
+            return products;
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

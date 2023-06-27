@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.zhenyok.database.DatabaseHandler;
 import org.zhenyok.pojo.Product;
@@ -12,6 +13,7 @@ import org.zhenyok.pojo.Product;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
@@ -66,11 +68,12 @@ public class MyServer {
 
         private void handleGetRequest(String path, HttpExchange exchange) throws IOException {
             String id = path.split("/")[3];
-            Product product = db.getProductById(Integer.parseInt(id));
-            if (product == null) {
+            ArrayList<Product> products = db.sort("name");
+            System.out.println(products);
+            if (products == null) {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
             } else {
-                JSONObject jo = new JSONObject(product);
+                JSONArray jo = new JSONArray(products);
                 sendResponse(jo.toString(1), STATUS_OK, exchange);
             }
         }
