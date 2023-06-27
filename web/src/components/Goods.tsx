@@ -26,7 +26,7 @@ export default function Goods() {
                     quantity: data.count,
                     price: data.price,
                 };
-                setProducts((prevProducts) => [...prevProducts, newData]);
+                setProducts([newData]); // Set the products state with the fetched data
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

@@ -1,6 +1,6 @@
 // prodtable.tsx
 import React from 'react';
-import { MDBDataTable } from 'mdbreact';
+import { MDBDataTableV5 } from 'mdbreact';
 
 interface Item {
     id: number;
@@ -53,7 +53,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
     return (
         <div>
             <h1>Data Table</h1>
-            <MDBDataTable data={data} />
+            <MDBDataTableV5 data={data} />
         </div>
     );
 };
