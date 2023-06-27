@@ -72,7 +72,7 @@ export default function Categories() {
               const data = { name: categoryName };
 
               try {
-                const response = await axios.post('http://localhost:8000/api/good', data);
+                const response = await axios.put('http://localhost:8000/api/categories', data);
                 // Handle successful response
                 console.log('Category added:', response.data);
                 // Close the form window after successful submission

@@ -1,4 +1,3 @@
-// prodtable.tsx
 import React from 'react';
 import { MDBDataTableV5 } from 'mdbreact';
 
@@ -15,8 +14,21 @@ interface ProdTableProps {
 }
 
 const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
-    const handleDelete = (id: number) => {
-        console.log(`Delete product with ID ${id}`);
+    const handleDelete = async (id: number) => {
+        try {
+            const response = await fetch(`/api/good/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                console.log(`Product with ID ${id} deleted successfully.`);
+                // Perform any additional actions if needed
+            } else {
+                console.error(`Failed to delete product with ID ${id}.`);
+            }
+        } catch (error) {
+            console.error(`An error occurred while deleting product with ID ${id}.`, error);
+        }
     };
 
     const handleEdit = (id: number) => {
@@ -53,6 +65,11 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
                 label: 'Actions',
                 field: 'actions',
                 width: 100,
+                attributes: {
+                    style: {
+                        textAlign: 'center',
+                    },
+                },
             },
         ],
         rows: products.map((product) => ({
@@ -61,7 +78,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             quantity: product.quantity,
             price: product.price,
             actions: (
-                <div>
+                <div style={{ textAlign: 'center' }}>
                     <button
                         onClick={() => handleEdit(product.id)}
                         style={{
@@ -98,7 +115,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
 
     return (
         <div>
-            <h1>Products</h1>
+            <h1>Goods information</h1>
             <MDBDataTableV5 data={data} />
         </div>
     );

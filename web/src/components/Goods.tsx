@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Search from './FindGood.tsx';
 import ProdTable from './ProdTable.tsx';
 
 interface Item {
