@@ -5,7 +5,8 @@ import Goods from './components/Goods.tsx';
 
 export default function App() {
     return (
-        <div className="bg-gradient-to-bl from-yellow-500 to-purple-500">
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(blue, 10%, pink)' }}>
+            {/* <div className="bg-gradient-to-bl from-yellow-500 to-purple-500"> */}
             <BrowserRouter>
                 <NavigationBar />
                 <Routes>

@@ -24,6 +24,8 @@ export default function Goods() {
                 <style>
                     body {
                         font-family: 'Montserrat', serif;
+                        background: linear-gradient(#007bff,pink);
+
                     }
                     .form-container {
                         max-width: 400px;
@@ -31,6 +33,8 @@ export default function Goods() {
                         padding: 20px;
                         border: 1px solid #ccc;
                         border-radius: 10px;
+                        background: whitesmoke;
+
                     }
                     .form-label {
                         display: block;
