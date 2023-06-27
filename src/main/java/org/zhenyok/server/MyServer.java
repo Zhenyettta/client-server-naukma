@@ -43,6 +43,9 @@ public class MyServer {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
             String path = exchange.getRequestURI().getPath();
             System.out.println(path);
             if (path.startsWith("/api/good")) {
