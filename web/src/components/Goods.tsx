@@ -12,6 +12,70 @@ interface Item {
 }
 
 export default function Goods() {
+    const handleAddGood = () => {
+        const formWindow = window.open('', '_blank');
+        formWindow.document.write(`
+            <html>
+            <head>
+                <title>Add Good</title>
+                <style>
+                    body {
+                        font-family: 'Montserrat';
+                    }
+                    .form-container {
+                        max-width: 400px;
+                        margin: 20px auto;
+                        padding: 20px;
+                        border: 1px solid #ccc;
+                        border-radius: 10px;
+                    }
+                    .form-label {
+                        display: block;
+                        margin-bottom: 10px;
+                        font-size: 16px;
+                    }
+                    .form-input {
+                        width: 100%;
+                        padding: 8px;
+                        font-size: 16px;
+                    }
+                    .form-button {
+                        margin-top: 20px;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        background: #3E7FFF;
+                        color: #FFF;
+                        border: none;
+                        border-radius: 10px;
+                        cursor: pointer;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="form-container">
+                    <h2>Add Good</h2>
+                    <form>
+                        <label class="form-label" for="product-name">Product Name:</label>
+                        <input class="form-input" type="text" id="product-name" name="product-name" required>
+                        
+                        <label class="form-label" for="category-id">Group ID</label>
+                        <input class="form-input" type="text" id="category-id" name="category-id" required>
+                        
+                        <label class="form-label" for="price">Price</label>
+                        <input class="form-input" type="text" id="price" name="price" required>
+                        
+                        <label class="form-label" for="amunt">Amount</label>
+                        <input class="form-input" type="text" id="amount" name="amount" required>
+                        
+                        <button class="form-button" type="submit">Submit</button>
+                    </form>
+                </div>
+            </body>
+            </html>
+        `);
+    };
+
+
     const [users, setUsers] = useState<Item[]>([]);
 
     useEffect(() => {
@@ -51,6 +115,8 @@ export default function Goods() {
                         fontFamily: 'Montserrat',
                         padding: '5px 10px',
                     }}
+                    onClick={handleAddGood}
+
                 >
                     Add product
                 </button>

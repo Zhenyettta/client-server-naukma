@@ -1,3 +1,4 @@
+
 export default function Categories() {
     const handleAddCategory = () => {
         const formWindow = window.open('', '_blank');
