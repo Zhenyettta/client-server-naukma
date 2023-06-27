@@ -1,7 +1,7 @@
-import { MDBDataTable } from 'mdbreact';
 import React from 'react';
+import { MDBDataTable } from 'mdbreact';
 
-interface Item {
+public interface Item {
     id: number;
     name: string;
     groupName: string;
@@ -46,7 +46,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             groupName: product.groupName,
             quantity: product.quantity,
             price: product.price,
-        })),
+        })) as any[],
     };
 
     return (
