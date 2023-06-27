@@ -8,7 +8,7 @@ export default function Categories() {
                 <title>Add Category</title>
                 <style>
                     body {
-                        font-family: 'Montserrat';
+                        font-family: 'Montserrat',serif;
                     }
                     .form-container {
                         max-width: 400px;

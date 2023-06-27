@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Search from './Search.tsx';
+import Search from './FindGood.tsx';
 import ProdTable from './ProdTable.tsx';
 
 interface Item {
@@ -20,7 +20,7 @@ export default function Goods() {
                 <title>Add Good</title>
                 <style>
                     body {
-                        font-family: 'Montserrat';
+                        font-family: 'Montserrat',serif;
                     }
                     .form-container {
                         max-width: 400px;
@@ -64,7 +64,7 @@ export default function Goods() {
                         <label class="form-label" for="price">Price</label>
                         <input class="form-input" type="text" id="price" name="price" required>
                         
-                        <label class="form-label" for="amunt">Amount</label>
+                        <label class="form-label" for="amount">Amount</label>
                         <input class="form-input" type="text" id="amount" name="amount" required>
                         
                         <button class="form-button" type="submit">Submit</button>
@@ -116,7 +116,6 @@ export default function Goods() {
                         padding: '5px 10px',
                     }}
                     onClick={handleAddGood}
-
                 >
                     Add product
                 </button>

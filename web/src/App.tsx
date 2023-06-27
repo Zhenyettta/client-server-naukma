@@ -5,7 +5,7 @@ import Goods from './components/Goods.tsx';
 
 export default function App() {
     return (
-        <div className="bg-gradient-to-r from-primary to-secondary">
+        <div className="bg-gradient-to-bl from-yellow-500 to-purple-500">
             <BrowserRouter>
                 <NavigationBar />
                 <Routes>
