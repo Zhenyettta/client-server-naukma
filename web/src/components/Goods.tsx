@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Search from './FindGood.tsx';
 import ProdTable from './ProdTable.tsx';
 
 interface Item {
@@ -17,7 +16,6 @@ export default function Goods() {
     const handleAddGood = () => {
 
         const formWindow = window.open('', '_blank');
-        // @ts-ignore
         formWindow.document.write(`
             <html>
             <head>
