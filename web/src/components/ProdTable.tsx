@@ -15,6 +15,11 @@ interface ProdTableProps {
 
 const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
     const handleDelete = async (id: number) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this product?');
+        if (!confirmDelete) {
+            return; // Abort deletion if user cancels
+        }
+
         try {
             const response = await fetch(`http://localhost:8000/api/good/${id}`, {
                 method: 'DELETE',
@@ -30,6 +35,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             console.error(`An error occurred while deleting product with ID ${id}.`, error);
         }
     };
+
 
     const handleEdit = (id: number) => {
         console.log(`Edit product with ID ${id}`);

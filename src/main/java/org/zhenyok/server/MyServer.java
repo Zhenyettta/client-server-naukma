@@ -105,14 +105,17 @@ public class MyServer {
             System.out.println(path);
             if (path.startsWith("/api/good")) {
                 String method = exchange.getRequestMethod().toLowerCase();
+                System.out.println(method);
                 if (method.equals("get")) {
                     handleGetRequest(path, exchange);
                 } else if (method.equals("put")) {
                     handlePutRequest(exchange);
                 } else if (method.equals("post")) {
                     handlePostRequest(path, exchange);
-                } else if (method.equals("delete")) {
+                } else if (method.equals("options")) {
+                    System.out.println("1");
                     handleDeleteRequest(path, exchange);
+                    System.out.println("2");
                 }
             } else {
                 System.out.println("Invalid path");
@@ -182,6 +185,7 @@ public class MyServer {
         private void handleDeleteRequest(String path, HttpExchange exchange) throws IOException {
             int id = Integer.parseInt(path.split("/")[3]);
             Product product = db.getProductById(id);
+            System.out.println("DELETTING");
             if (product == null) {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
             } else {
