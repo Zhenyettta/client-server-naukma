@@ -29,7 +29,7 @@ public class DatabaseHandler extends Const {
     }
 
     public int createProduct(Product product) {
-        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price, group_id, characteristics, supplier) VALUES (?, ?, ?, null, ?, ?) RETURNING id";
+        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price, group_id, characteristics, supplier) VALUES (?, ?, ?, "+(getGroupId(product.getGroup())==-1?null:getGroupId(product.getGroup()))+", ?, ?) RETURNING id";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, product.getName());
