@@ -140,7 +140,7 @@ public class MyServer {
             double price = jsonBody.getDouble("price");
             if (getNonNullValuesLength(jsonBody) == 3) {
                 if (!db.checkProductByName(name)) {
-                    Product product = new Product(name, quantity, price, null);
+                    Product product = new Product(name, quantity, price, null, 0);
                     int productId = db.createProduct(product);
                     sendResponse(name + " " + productId + " created successfully ", STATUS_CREATED, exchange);
                 } else {

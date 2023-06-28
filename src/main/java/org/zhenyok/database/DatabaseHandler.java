@@ -123,7 +123,7 @@ public class DatabaseHandler extends Const {
                     String groupName = resultSet.getString("name");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
-                    return new Product(name, count, price, group);
+                    return new Product(name, count, price, group, 0);
                 }
             }
         } catch (SQLException e) {
@@ -148,7 +148,7 @@ public class DatabaseHandler extends Const {
                     String groupName = resultSet.getString("name");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
-                    return new Product(name, count, price, group);
+                    return new Product(name, count, price, group,0);
                 }
             }
         } catch (SQLException e) {
@@ -271,16 +271,17 @@ public class DatabaseHandler extends Const {
     }
 
     public ArrayList<Product> sort(String sortingCriteria) {
-        String query = "SELECT name, count, price FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
+        String query = "SELECT id,name, count, price FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet set = statement.executeQuery();
             ArrayList<Product> products = new ArrayList<>();
             while (set.next()) {
+                int id = set.getInt("id");
                 String productName = set.getString("name");
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
-                Product product = new Product(productName, count, price, null);
+                Product product = new Product(productName, count, price, null,id);
                 products.add(product);
             }
             return products;

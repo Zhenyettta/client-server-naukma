@@ -38,6 +38,12 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
     const data = {
         columns: [
             {
+                label: 'ID',
+                field: 'id',
+                sort: 'asc',
+                width: 150,
+            },
+            {
                 label: 'Name',
                 field: 'name',
                 sort: 'asc',
@@ -73,6 +79,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             },
         ],
         rows: products.map((product) => ({
+            id:product.id,
             name: product.name,
             groupName: product.groupName,
             quantity: product.quantity,

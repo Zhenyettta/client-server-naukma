@@ -13,13 +13,17 @@ public class Product implements Serializable {
     private volatile int count;
     private volatile double price;
     private volatile Group group;
+    private volatile int id;
 
-    public Product(String name, int count, double price, Group group) {
+
+    public Product(String name, int count, double price, Group group, int id) {
         this.name = name;
         this.count = count;
         this.price = price;
         this.group = group;
+        this.id = id != 0 ? id : -1;
     }
+
 
 
 
