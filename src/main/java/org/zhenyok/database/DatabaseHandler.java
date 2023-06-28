@@ -123,7 +123,10 @@ public class DatabaseHandler extends Const {
                     String groupName = resultSet.getString("name");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
-                    return new Product(0,name, count, price, group);
+                    if (group != null) {
+                        return new Product(0,name, count, price, group.getName());
+                    }
+
                 }
             }
         } catch (SQLException e) {
@@ -148,7 +151,8 @@ public class DatabaseHandler extends Const {
                     String groupName = resultSet.getString("name");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
-                    return new Product(0,name, count, price, group);
+                    String groupNameFinal = group == null ? "" : group.getName();
+                    return new Product(0,name, count, price, groupNameFinal);
                 }
             }
         } catch (SQLException e) {
@@ -199,22 +203,21 @@ public class DatabaseHandler extends Const {
         return false;
     }
 
-    public Group getGroup(String name) {
-        String query = "SELECT name " + "FROM " + GROUPS_TABLE + " WHERE name = ?";
+    public String getGroup(int id) {
+        String query = "SELECT name " + "FROM " + GROUPS_TABLE + " WHERE id = ?";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, name);
+            statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    String groupName = resultSet.getString("name");
 
-                    return new Group(groupName);
+                    return resultSet.getString("name");
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return "";
     }
 
     public boolean setGroup(int id, String groupName) {
@@ -283,7 +286,7 @@ public class DatabaseHandler extends Const {
     }
 
     public ArrayList<Product> sort(String sortingCriteria) {
-        String query = "SELECT id,name, count, price FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
+        String query = "SELECT id, name, count, price, group_id FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet set = statement.executeQuery();
@@ -293,7 +296,8 @@ public class DatabaseHandler extends Const {
                 String productName = set.getString("name");
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
-                Product product = new Product(id,productName, count, price, null);
+                int groupId = set.getInt("group_id");
+                Product product = new Product(id,productName, count, price, getGroup(groupId));
                 products.add(product);
             }
             return products;

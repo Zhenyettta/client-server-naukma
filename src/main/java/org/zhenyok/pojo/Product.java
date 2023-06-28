@@ -12,15 +12,15 @@ public class Product implements Serializable {
     private final String name;
     private volatile int count;
     private volatile double price;
-    private volatile Group group;
+    private volatile String groupName;
     private volatile int id;
 
 
-    public Product(int id, String name, int count, double price, Group group) {
+    public Product(int id, String name, int count, double price, String group) {
         this.name = name;
         this.count = count;
         this.price = price;
-        this.group = group;
+        this.groupName = group;
         this.id = id != 0 ? id : -1;
     }
 
@@ -47,12 +47,12 @@ public class Product implements Serializable {
         this.price = price;
     }
 
-    public Group getGroup() {
-        return group;
+    public String getGroup() {
+        return groupName;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setGroup(String group) {
+        this.groupName = group;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class Product implements Serializable {
                 "name='" + name + '\'' +
                 ", count=" + count +
                 ", price=" + price +
-                ", group=" + group +
+                ", group=" + groupName +
                 '}';
     }
 

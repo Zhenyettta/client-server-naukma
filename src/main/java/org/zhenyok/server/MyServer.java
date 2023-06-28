@@ -3,7 +3,6 @@ package org.zhenyok.server;
 import com.sun.net.httpserver.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,28 +61,25 @@ public class MyServer {
             exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
             String path = exchange.getRequestURI().getPath();
+            System.out.println("category");
             if (path.startsWith("/api/categories")) {
                 String method = exchange.getRequestMethod().toLowerCase();
-                if (method.equals("post")) {
-                    System.out.println("updating");
-                } else if (method.equals("get")) {
-                    handleGetRequestCategory(path, exchange);
-                } else if (method.equals("options")) {
-                    handlePutRequestCategory(path, exchange);
-                } else if (method.equals("delete")) {
-                    handleDeleteRequestCategory(path,exchange);
+                System.out.println(method + " in category");
+                switch (method) {
+                    case "post" -> System.out.println("updating");
+                    case "get" -> handleGetRequestCategory(exchange);
+                    case "put" -> {
+                        System.out.println("Comming in");
+                        handlePutRequestCategory(exchange);
+                    }
+                    case "delete" -> handleDeleteRequestCategory(path, exchange);
                 }
             } else {
                 System.out.println("Invalid path");
             }
         }
 
-        private void handleDeleteRequestCategory(String path, HttpExchange exchange) throws IOException {
-            String name = (path.split("/")[3]); // correct value
-
-        }
-
-        public void handleGetRequestCategory(String path, HttpExchange exchange) throws IOException {
+        public void handleGetRequestCategory(HttpExchange exchange) {
             ArrayList<Group> categories = db.sortCategories("name");
             System.out.println(categories);
             if (categories == null) {
@@ -94,13 +90,19 @@ public class MyServer {
             }
         }
 
-        private void handlePutRequestCategory(String path, HttpExchange exchange) throws IOException {
+        private void handlePutRequestCategory(HttpExchange exchange) throws IOException {
             System.out.println("In here");
             String values = getBody(exchange);
             JSONObject jsonBody = new JSONObject(values);
             String name = jsonBody.getString("name");
             Group group = new Group(name);
             db.createGroup(group);
+            sendResponse("", STATUS_NO_CONTENT, exchange);
+        }
+
+        private void handleDeleteRequestCategory(String path, HttpExchange exchange) {
+            String name = path.split("/")[3];
+            db.removeGroup(name);
             sendResponse("", STATUS_NO_CONTENT, exchange);
         }
     }
@@ -124,16 +126,15 @@ public class MyServer {
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
             String path = exchange.getRequestURI().getPath();
+            System.out.println(path);
             if (path.startsWith("/api/good")) {
                 String method = exchange.getRequestMethod().toLowerCase();
-                if (method.equals("get")) {
-                    handleGetRequest(path, exchange);
-                } else if (method.equals("put")) {
-                    handlePutRequest(exchange);
-                } else if (method.equals("post")) {
-                    handlePostRequest(path, exchange);
-                } else if (method.equals("delete")) {
-                    handleDeleteRequest(path, exchange);
+                System.out.println(method + " 2213213");
+                switch (method) {
+                    case "get" -> handleGetRequest(path, exchange);
+                    case "put" -> handlePutRequest(exchange);
+                    case "post" -> handlePostRequest(path, exchange);
+                    case "delete" -> handleDeleteRequest(path, exchange);
                 }
             } else {
                 System.out.println("Invalid path");
@@ -162,7 +163,7 @@ public class MyServer {
             double price = jsonBody.getDouble("price");
             if (getNonNullValuesLength(jsonBody) == 3) {
                 if (!db.checkProductByName(name)) {
-                    Product product = new Product(0,name, quantity, price, null);
+                    Product product = new Product(0, name, quantity, price, null);
                     int productId = db.createProduct(product);
                     sendResponse(name + " " + productId + " created successfully ", STATUS_CREATED, exchange);
                 } else {
@@ -301,7 +302,7 @@ public class MyServer {
         }
     }
 
-    private static void sendResponse(String str, int statusCode, HttpExchange exchange) throws IOException {
+    private static void sendResponse(String str, int statusCode, HttpExchange exchange) {
         try {
             exchange.sendResponseHeaders(statusCode, str.getBytes().length);
             OutputStream os = exchange.getResponseBody();
