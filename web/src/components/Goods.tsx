@@ -64,17 +64,17 @@ export default function Goods() {
             <body>
                 <div class="form-container">
                     <h2>Add Category</h2>
-                    <form>
+                   
                         <label class="form-label" for="name">Name:</label>
                         <input class="form-input" type="text" id="name" name="name" required>
                          
-                         <label class="form-label" for="category">Category:</label>
-                        <input class="form-input" type="text" id="category" name="category" required>
+                        <label class="form-label" for="category">Category:</label>
+                        <input class="form-input" type="text" id="category" name="category">
   
-                         <label class="form-label" for="price">Price:</label>
+                        <label class="form-label" for="price">Price:</label>
                         <input class="form-input" type="text" id="price" name="price" required>
                         
-                        <label class="form-label" for="amount">Category Name:</label>
+                        <label class="form-label" for="amount">Amount:</label>
                         <input class="form-input" type="text" id="amount" name="amount" required>
                         
                         <label class="form-label" for="supplier">Supplier Name:</label>
@@ -83,9 +83,40 @@ export default function Goods() {
                         <label class="form-label" for="characteristic">Characteristic:</label>
                         <input class="form-input" type="text" id="characteristic" name="characteristic" required>
                                                                                               
-                        <button class="form-button"  type="submit">Submit</button>
-                    </form>
+                        <button class="form-button" id = "submit-button" ">Submit</button>
+                    
                 </div>
+                <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+            <script>
+             const submitButton = document.getElementById('submit-button');
+             submitButton.addEventListener('click', async () => {
+             const nameInput = document.getElementById('name');
+             const categoryNameInput = document.getElementById('category');
+             const priceInput = document.getElementById('price');
+             const amountInput = document.getElementById('amount');
+             const supplierInput = document.getElementById('supplier');
+             const characteristicInput = document.getElementById('characteristic');
+             
+             const name = nameInput.value;
+             const categoryName = categoryNameInput.value;
+             const price = priceInput.value;
+             const amount = amountInput.value;
+             const supplier = supplierInput.value;
+             const characteristics = characteristicInput.value;
+
+                try {
+                    
+                  const response = await axios.put('http://localhost:8000/api/good', 
+                  {group: categoryName, name: name, price: price, quantity: amount, supplier: supplier, characteristics: characteristics});
+                    
+                  // Handle the response if needed
+                } catch (error) {
+                  console.error('Error sending GET request:', error);
+                }
+    
+               
+              });
+            </script>
             </body>
             </html>
             

@@ -160,17 +160,18 @@ public class MyServer {
             JSONObject jsonBody = new JSONObject(values);
             String name = jsonBody.getString("name");
             String supplier = jsonBody.getString("supplier");
-            String characteristic = jsonBody.getString("characteristic");
+            String characteristic = jsonBody.getString("characteristics");
+            String group = jsonBody.getString("group");
             int quantity = jsonBody.getInt("quantity");
             double price = jsonBody.getDouble("price");
-            if (getNonNullValuesLength(jsonBody) == 3) {
-                if (!db.checkProductByName(name)) {
-                    Product product = new Product(0, name, quantity, price, null,supplier,characteristic);
-                    int productId = db.createProduct(product);
-                    sendResponse(name + " " + productId + " created successfully ", STATUS_CREATED, exchange);
-                } else {
-                    sendResponse("Product already exists", STATUS_CONFLICT, exchange);
-                }
+
+            if (!db.checkProductByName(name)) {
+                Product product = new Product(0, name, quantity, price, db.getGroupByName(group), supplier, characteristic);
+                int productId = db.createProduct(product);
+                sendResponse(name + " " + productId + " created successfully ", STATUS_CREATED, exchange);
+            } else {
+                sendResponse("Product already exists", STATUS_CONFLICT, exchange);
+
             }
         }
 

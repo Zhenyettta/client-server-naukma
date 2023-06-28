@@ -29,12 +29,14 @@ public class DatabaseHandler extends Const {
     }
 
     public int createProduct(Product product) {
-        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price) VALUES (?, ?, ?) RETURNING id";
+        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price, group_id, characteristics, supplier) VALUES (?, ?, ?, null, ?, ?) RETURNING id";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, product.getName());
             statement.setInt(2, product.getCount());
             statement.setDouble(3, product.getPrice());
+            statement.setString(4, product.getCharacteristic());
+            statement.setString(5, product.getSupplier());
 
             ResultSet resultSet = statement.executeQuery();
 
@@ -126,7 +128,7 @@ public class DatabaseHandler extends Const {
 
                     Group group = groupId == 0 ? null : new Group(groupName);
                     if (group != null) {
-                        return new Product(0,name, count, price, group.getName(),supplier,characteristic);
+                        return new Product(0, name, count, price, group.getName(), supplier, characteristic);
                     }
 
                 }
@@ -156,7 +158,7 @@ public class DatabaseHandler extends Const {
 
                     Group group = groupId == 0 ? null : new Group(groupName);
                     String groupNameFinal = group == null ? "" : group.getName();
-                    return new Product(0,name, count, price, groupNameFinal,supplier,characteristic);
+                    return new Product(0, name, count, price, groupNameFinal, supplier, characteristic);
                 }
             }
         } catch (SQLException e) {
@@ -212,6 +214,40 @@ public class DatabaseHandler extends Const {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+
+                    return resultSet.getString("name");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
+
+    public int getGroupId(String name) {
+        String query = "SELECT id " + "FROM " + GROUPS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+
+                    return resultSet.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return -1;
+    }
+
+    public String getGroupByName(String name) {
+        String query = "SELECT name " + "FROM " + GROUPS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
 
@@ -303,7 +339,7 @@ public class DatabaseHandler extends Const {
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
                 int groupId = set.getInt("group_id");
-                Product product = new Product(id,productName, count, price, getGroup(groupId),supplier,characteristic);
+                Product product = new Product(id, productName, count, price, getGroup(groupId), supplier, characteristic);
                 products.add(product);
             }
             return products;
