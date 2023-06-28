@@ -52,6 +52,7 @@ export default function Categories() {
               }
           </style>
       </head>
+      
       <body>
         <h2 style="color: black; font-size: 20px; text-align: center; font-family: 'Arial', sans-serif; font-weight: bold; text-transform: uppercase;">Add Category</h2>
         <label class="form-label" for="category-name">Category Name:</label>
@@ -64,11 +65,11 @@ export default function Categories() {
             const categoryNameInput = document.getElementById('category-name');
             const categoryName = categoryNameInput.value;
 
-            // Send GET request to your URL with the category name
+            
             try {
                 
               const response = await axios.put('http://localhost:8000/api/categories', {name: categoryName});
-                
+              window.location.href = 'http://localhost:5173/goods/categories'
               // Handle the response if needed
             } catch (error) {
               console.error('Error sending GET request:', error);

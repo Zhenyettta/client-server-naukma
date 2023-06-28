@@ -8,7 +8,7 @@ interface Item {
     quantity: number;
     price: number;
     supplier: string;
-    characteristic: string;
+    characteristics: string;
 
 }
 
@@ -105,8 +105,8 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
                         <label class="form-label" for="supplier">Supplier Name:</label>
                         <input class="form-input" type="text" id="supplier" name="supplier">
                         
-                        <label class="form-label" for="characteristic">Characteristic:</label>
-                        <input class="form-input" type="text" id="characteristic" name="characteristic">
+                        <label class="form-label" for="characteristics">Characteristics:</label>
+                        <input class="form-input" type="text" id="characteristics" name="characteristics">
                                                                                               
                         <button class="form-button"  type="submit">Submit</button>
                     </form>
@@ -156,8 +156,8 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
                 width: 270,
             },
             {
-                label: 'Characteristic',
-                field: 'characteristic',
+                label: 'Characteristics',
+                field: 'characteristics',
                 sort: 'asc',
                 width: 150,
             },
@@ -179,7 +179,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             quantity: product.quantity,
             price: product.price,
             supplier: product.supplier,
-            characteristic: product.characteristic,
+            characteristics: product.characteristics,
 
 
             actions: (

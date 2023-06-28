@@ -9,7 +9,7 @@ interface Item {
     quantity: number;
     price: number;
     supplier: string;
-    characteristic: string;
+    characteristics: string;
 
 }
 
@@ -80,8 +80,8 @@ export default function Goods() {
                         <label class="form-label" for="supplier">Supplier Name:</label>
                         <input class="form-input" type="text" id="supplier" name="supplier" required>
                         
-                        <label class="form-label" for="characteristic">Characteristic:</label>
-                        <input class="form-input" type="text" id="characteristic" name="characteristic" required>
+                        <label class="form-label" for="characteristics">Characteristics:</label>
+                        <input class="form-input" type="text" id="characteristics" name="characteristics" required>
                                                                                               
                         <button class="form-button" id = "submit-button" ">Submit</button>
                     
@@ -95,7 +95,7 @@ export default function Goods() {
              const priceInput = document.getElementById('price');
              const amountInput = document.getElementById('amount');
              const supplierInput = document.getElementById('supplier');
-             const characteristicInput = document.getElementById('characteristic');
+             const characteristicInput = document.getElementById('characteristics');
              
              const name = nameInput.value;
              const categoryName = categoryNameInput.value;
@@ -128,7 +128,7 @@ export default function Goods() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/good/1');
+                const response = await axios.get('http://localhost:8000/api/good');
                 const { data } = response;
                 const newProducts = data.map((item: any) => ({
                     id: item.id,
@@ -137,7 +137,7 @@ export default function Goods() {
                     quantity: item.count,
                     price: item.price,
                     supplier: item.supplier,
-                    characteristic: item.characteristic,
+                    characteristics: item.characteristics,
                 }));
                 setProducts(newProducts);
             } catch (error) {
