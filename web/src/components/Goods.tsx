@@ -5,7 +5,7 @@ import ProdTable from './ProdTable.tsx';
 interface Item {
     id: number;
     name: string;
-    groupName: string;
+    group: string;
     quantity: number;
     price: number;
 }
@@ -92,7 +92,7 @@ export default function Goods() {
                 const newProducts = data.map((item: any) => ({
                     id: item.id,
                     name: item.name,
-                    groupName: item.groupName,
+                    group: item.group,
                     quantity: item.count,
                     price: item.price,
                 }));

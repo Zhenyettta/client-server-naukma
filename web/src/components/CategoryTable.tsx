@@ -61,7 +61,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
             },
         ],
         rows: categories.map((category) => ({
-            name: <div style={{ marginLeft: '20px' }}>{category.name}</div>,
+            name: category.name,
             actions: (
                 <div style={{ textAlign: 'center' }}>
                     <button

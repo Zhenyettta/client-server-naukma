@@ -4,7 +4,7 @@ import { MDBDataTableV5 } from 'mdbreact';
 interface Item {
     id: number;
     name: string;
-    groupName: string;
+    group: string;
     quantity: number;
     price: number;
 }
@@ -58,7 +58,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             },
             {
                 label: 'Group Name',
-                field: 'groupName',
+                field: 'group',
                 sort: 'asc',
                 width: 270,
             },
@@ -88,7 +88,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
         rows: products.map((product) => ({
             id:product.id,
             name: product.name,
-            groupName: product.groupName,
+            group: product.group,
             quantity: product.quantity,
             price: product.price,
             actions: (

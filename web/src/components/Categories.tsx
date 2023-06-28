@@ -13,7 +13,6 @@ export default function Categories() {
     const handleAddCategory = async () => {
         const formWindow = window.open('', '_blank');
 
-        // @ts-ignore
         formWindow.document.write(`
       <html>
       <head>
