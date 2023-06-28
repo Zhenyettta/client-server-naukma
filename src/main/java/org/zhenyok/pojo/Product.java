@@ -1,11 +1,6 @@
 package org.zhenyok.pojo;
 
-import com.sun.source.doctree.SerialDataTree;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class Product implements Serializable {
 
@@ -14,18 +9,18 @@ public class Product implements Serializable {
     private volatile double price;
     private volatile String groupName;
     private volatile String supplier;
-    private volatile String characteristic;
+    private volatile String characteristics;
     private volatile int id;
 
 
-    public Product(int id, String name, int count, double price, String group, String supplier, String characteristic) {
+    public Product(int id, String name, int count, double price, String group, String supplier, String characteristics) {
         this.name = name;
         this.count = count;
         this.price = price;
         this.groupName = group;
         this.id = id != 0 ? id : -1;
         this.supplier = supplier;
-        this.characteristic = characteristic;
+        this.characteristics = characteristics;
     }
 
 
@@ -67,7 +62,7 @@ public class Product implements Serializable {
                 ", price=" + price +
                 ", group=" + groupName +
                 ", supplier=" + supplier +
-                ", char=" + characteristic +
+                ", char=" + characteristics +
                 '}';
     }
 
@@ -87,11 +82,11 @@ public class Product implements Serializable {
         this.supplier = supplier;
     }
 
-    public String getCharacteristic() {
-        return characteristic;
+    public String getCharacteristics() {
+        return characteristics;
     }
 
-    public void setCharacteristic(String characteristic) {
-        this.characteristic = characteristic;
+    public void setCharacteristics(String characteristics) {
+        this.characteristics = characteristics;
     }
 }

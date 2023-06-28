@@ -96,7 +96,8 @@ public class MyServer {
             JSONObject jsonBody = new JSONObject(values);
             String name = jsonBody.getString("name");
             Group group = new Group(name);
-            db.createGroup(group);
+            if (!db.checkGroupByName(name))
+                db.createGroup(group);
             sendResponse("", STATUS_NO_CONTENT, exchange);
         }
 
@@ -143,7 +144,6 @@ public class MyServer {
 
 
         private void handleGetRequest(String path, HttpExchange exchange) throws IOException {
-            String id = path.split("/")[3];
             ArrayList<Product> products = db.sort("name");
             System.out.println(products);
             if (products == null) {
@@ -160,13 +160,13 @@ public class MyServer {
             JSONObject jsonBody = new JSONObject(values);
             String name = jsonBody.getString("name");
             String supplier = jsonBody.getString("supplier");
-            String characteristic = jsonBody.getString("characteristics");
+            String characteristics = jsonBody.getString("characteristics");
             String group = jsonBody.getString("group");
             int quantity = jsonBody.getInt("quantity");
             double price = jsonBody.getDouble("price");
 
             if (!db.checkProductByName(name)) {
-                Product product = new Product(0, name, quantity, price, db.getGroupByName(group), supplier, characteristic);
+                Product product = new Product(0, name, quantity, price, db.getGroupByName(group), supplier, characteristics);
                 int productId = db.createProduct(product);
                 sendResponse(name + " " + productId + " created successfully ", STATUS_CREATED, exchange);
             } else {

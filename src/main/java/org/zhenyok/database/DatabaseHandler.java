@@ -35,7 +35,7 @@ public class DatabaseHandler extends Const {
             statement.setString(1, product.getName());
             statement.setInt(2, product.getCount());
             statement.setDouble(3, product.getPrice());
-            statement.setString(4, product.getCharacteristic());
+            statement.setString(4, product.getCharacteristics());
             statement.setString(5, product.getSupplier());
 
             ResultSet resultSet = statement.executeQuery();
@@ -110,37 +110,8 @@ public class DatabaseHandler extends Const {
         return false;
     }
 
-    public Product getProduct(String name) {
-        String query = "SELECT p.count, p.price, p.group_id, g.name, p.supplier, p.characteristic " +
-                "FROM " + PRODUCTS_TABLE + " p LEFT JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id " +
-                "WHERE p.name = ?";
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, name);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    int count = resultSet.getInt("count");
-                    int price = resultSet.getInt("price");
-                    int groupId = resultSet.getInt("group_id");
-                    String groupName = resultSet.getString("name");
-                    String supplier = resultSet.getString("supplier");
-                    String characteristic = resultSet.getString("characteristic");
-
-                    Group group = groupId == 0 ? null : new Group(groupName);
-                    if (group != null) {
-                        return new Product(0, name, count, price, group.getName(), supplier, characteristic);
-                    }
-
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
     public Product getProductById(int id) {
-        String query = "SELECT p.name, p.count, p.price, p.group_id, g.name, p.supplier, p.characteristic " +
+        String query = "SELECT p.name, p.count, p.price, p.group_id, g.name, p.supplier, p.characteristics " +
                 "FROM " + PRODUCTS_TABLE + " p LEFT JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id " +
                 "WHERE p.id = ?";
         try (Connection connection = getConnection();
@@ -154,11 +125,11 @@ public class DatabaseHandler extends Const {
                     int groupId = resultSet.getInt("group_id");
                     String groupName = resultSet.getString("name");
                     String supplier = resultSet.getString("supplier");
-                    String characteristic = resultSet.getString("characteristic");
+                    String characteristics = resultSet.getString("characteristics");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
                     String groupNameFinal = group == null ? "" : group.getName();
-                    return new Product(0, name, count, price, groupNameFinal, supplier, characteristic);
+                    return new Product(0, name, count, price, groupNameFinal, supplier, characteristics);
                 }
             }
         } catch (SQLException e) {
@@ -326,7 +297,7 @@ public class DatabaseHandler extends Const {
     }
 
     public ArrayList<Product> sort(String sortingCriteria) {
-        String query = "SELECT id, name, count, price, group_id, supplier, characteristic FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
+        String query = "SELECT id, name, count, price, group_id, supplier, characteristics FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet set = statement.executeQuery();
@@ -335,11 +306,11 @@ public class DatabaseHandler extends Const {
                 int id = set.getInt("id");
                 String productName = set.getString("name");
                 String supplier = set.getString("supplier");
-                String characteristic = set.getString("characteristic");
+                String characteristics = set.getString("characteristics");
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
                 int groupId = set.getInt("group_id");
-                Product product = new Product(id, productName, count, price, getGroup(groupId), supplier, characteristic);
+                Product product = new Product(id, productName, count, price, getGroup(groupId), supplier, characteristics);
                 products.add(product);
             }
             return products;
