@@ -13,15 +13,19 @@ public class Product implements Serializable {
     private volatile int count;
     private volatile double price;
     private volatile String groupName;
+    private volatile String supplier;
+    private volatile String characteristic;
     private volatile int id;
 
 
-    public Product(int id, String name, int count, double price, String group) {
+    public Product(int id, String name, int count, double price, String group, String supplier, String characteristic) {
         this.name = name;
         this.count = count;
         this.price = price;
         this.groupName = group;
         this.id = id != 0 ? id : -1;
+        this.supplier = supplier;
+        this.characteristic = characteristic;
     }
 
 
@@ -62,6 +66,8 @@ public class Product implements Serializable {
                 ", count=" + count +
                 ", price=" + price +
                 ", group=" + groupName +
+                ", supplier=" + supplier +
+                ", char=" + characteristic +
                 '}';
     }
 
@@ -71,5 +77,21 @@ public class Product implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public String getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
+    }
+
+    public String getCharacteristic() {
+        return characteristic;
+    }
+
+    public void setCharacteristic(String characteristic) {
+        this.characteristic = characteristic;
     }
 }

@@ -95,6 +95,8 @@ export default function Goods() {
                     group: item.group,
                     quantity: item.count,
                     price: item.price,
+                    supplier: item.supplier,
+                    characteristic: item.characteristic,
                 }));
                 setProducts(newProducts);
             } catch (error) {

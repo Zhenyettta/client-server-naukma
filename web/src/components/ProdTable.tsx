@@ -7,6 +7,9 @@ interface Item {
     group: string;
     quantity: number;
     price: number;
+    supplier: string;
+    characteristic: string;
+
 }
 
 interface ProdTableProps {
@@ -75,6 +78,18 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
                 width: 100,
             },
             {
+                label: 'Supplier',
+                field: 'supplier',
+                sort: 'asc',
+                width: 270,
+            },
+            {
+                label: 'Characteristic',
+                field: 'characteristic',
+                sort: 'asc',
+                width: 150,
+            },
+            {
                 label: 'Actions',
                 field: 'actions',
                 width: 100,
@@ -91,6 +106,10 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             group: product.group,
             quantity: product.quantity,
             price: product.price,
+            supplier: product.supplier,
+            characteristic: product.characteristic,
+
+
             actions: (
                 <div style={{ textAlign: 'center' }}>
                     <button

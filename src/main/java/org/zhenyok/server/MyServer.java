@@ -159,11 +159,13 @@ public class MyServer {
             String values = getBody(exchange);
             JSONObject jsonBody = new JSONObject(values);
             String name = jsonBody.getString("name");
+            String supplier = jsonBody.getString("supplier");
+            String characteristic = jsonBody.getString("characteristic");
             int quantity = jsonBody.getInt("quantity");
             double price = jsonBody.getDouble("price");
             if (getNonNullValuesLength(jsonBody) == 3) {
                 if (!db.checkProductByName(name)) {
-                    Product product = new Product(0, name, quantity, price, null);
+                    Product product = new Product(0, name, quantity, price, null,supplier,characteristic);
                     int productId = db.createProduct(product);
                     sendResponse(name + " " + productId + " created successfully ", STATUS_CREATED, exchange);
                 } else {

@@ -109,7 +109,7 @@ public class DatabaseHandler extends Const {
     }
 
     public Product getProduct(String name) {
-        String query = "SELECT p.count, p.price, p.group_id, g.name " +
+        String query = "SELECT p.count, p.price, p.group_id, g.name, p.supplier, p.characteristic " +
                 "FROM " + PRODUCTS_TABLE + " p LEFT JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id " +
                 "WHERE p.name = ?";
         try (Connection connection = getConnection();
@@ -121,10 +121,12 @@ public class DatabaseHandler extends Const {
                     int price = resultSet.getInt("price");
                     int groupId = resultSet.getInt("group_id");
                     String groupName = resultSet.getString("name");
+                    String supplier = resultSet.getString("supplier");
+                    String characteristic = resultSet.getString("characteristic");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
                     if (group != null) {
-                        return new Product(0,name, count, price, group.getName());
+                        return new Product(0,name, count, price, group.getName(),supplier,characteristic);
                     }
 
                 }
@@ -136,7 +138,7 @@ public class DatabaseHandler extends Const {
     }
 
     public Product getProductById(int id) {
-        String query = "SELECT p.name, p.count, p.price, p.group_id, g.name " +
+        String query = "SELECT p.name, p.count, p.price, p.group_id, g.name, p.supplier, p.characteristic " +
                 "FROM " + PRODUCTS_TABLE + " p LEFT JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id " +
                 "WHERE p.id = ?";
         try (Connection connection = getConnection();
@@ -149,10 +151,12 @@ public class DatabaseHandler extends Const {
                     int price = resultSet.getInt("price");
                     int groupId = resultSet.getInt("group_id");
                     String groupName = resultSet.getString("name");
+                    String supplier = resultSet.getString("supplier");
+                    String characteristic = resultSet.getString("characteristic");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
                     String groupNameFinal = group == null ? "" : group.getName();
-                    return new Product(0,name, count, price, groupNameFinal);
+                    return new Product(0,name, count, price, groupNameFinal,supplier,characteristic);
                 }
             }
         } catch (SQLException e) {
@@ -286,7 +290,7 @@ public class DatabaseHandler extends Const {
     }
 
     public ArrayList<Product> sort(String sortingCriteria) {
-        String query = "SELECT id, name, count, price, group_id FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
+        String query = "SELECT id, name, count, price, group_id, supplier, characteristic FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet set = statement.executeQuery();
@@ -294,10 +298,12 @@ public class DatabaseHandler extends Const {
             while (set.next()) {
                 int id = set.getInt("id");
                 String productName = set.getString("name");
+                String supplier = set.getString("supplier");
+                String characteristic = set.getString("characteristic");
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
                 int groupId = set.getInt("group_id");
-                Product product = new Product(id,productName, count, price, getGroup(groupId));
+                Product product = new Product(id,productName, count, price, getGroup(groupId),supplier,characteristic);
                 products.add(product);
             }
             return products;
