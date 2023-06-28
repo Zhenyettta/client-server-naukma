@@ -33,8 +33,66 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
             console.error(`An error occurred while deleting product with ID ${name}.`, error);
         }
     };
-    const handleEdit = (name: string) => {
-        console.log(`Edit product with ID ${name}`);
+    const handleEdit= (name: string) => {
+
+        const formWindow = window.open('', '_blank');
+        // @ts-ignore
+        formWindow.document.write(`
+            <html>
+            <head>
+                <title>Edit Category</title>
+                <style>
+                    body {
+                        font-family: 'Montserrat', serif;
+                        background: linear-gradient(#007bff,pink);
+
+                    }
+                    .form-container {
+                        max-width: 400px;
+                        margin: 20px auto;
+                        padding: 20px;
+                        border: 1px solid #ccc;
+                        border-radius: 10px;
+                        background: whitesmoke;
+
+                    }
+                    .form-label {
+                        display: block;
+                        margin-bottom: 10px;
+                        font-size: 16px;
+                    }
+                    .form-input {
+                        width: 100%;
+                        padding: 8px;
+                        font-size: 16px;
+                    }
+                    .form-button {
+                        margin-top: 20px;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        background: #3E7FFF;
+                        color: #FFF;
+                        border: none;
+                        border-radius: 10px;
+                        cursor: pointer;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="form-container">
+                    <h2>Edit Product "${name}"</h2>
+                    <form>
+                        <label class="form-label" for="name">New Name:</label>
+                        <input class="form-input" type="text" id="name" name="name">
+                         
+                        <button class="form-button"  type="submit">Submit</button>
+                    </form>
+                </div>
+            </body>
+            </html>
+            
+        `);
+
     };
     const data = {
         columns: [

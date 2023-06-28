@@ -8,6 +8,9 @@ interface Item {
     group: string;
     quantity: number;
     price: number;
+    supplier: string;
+    characteristic: string;
+
 }
 
 export default function Goods() {
@@ -73,6 +76,12 @@ export default function Goods() {
                         
                         <label class="form-label" for="amount">Category Name:</label>
                         <input class="form-input" type="text" id="amount" name="amount" required>
+                        
+                        <label class="form-label" for="supplier">Supplier Name:</label>
+                        <input class="form-input" type="text" id="supplier" name="supplier" required>
+                        
+                        <label class="form-label" for="characteristic">Characteristic:</label>
+                        <input class="form-input" type="text" id="characteristic" name="characteristic" required>
                                                                                               
                         <button class="form-button"  type="submit">Submit</button>
                     </form>
@@ -83,6 +92,7 @@ export default function Goods() {
         `);
 
     };
+
 
     useEffect(() => {
         const fetchData = async () => {
