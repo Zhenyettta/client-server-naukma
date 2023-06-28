@@ -123,7 +123,7 @@ public class DatabaseHandler extends Const {
                     String groupName = resultSet.getString("name");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
-                    return new Product(name, count, price, group, 0);
+                    return new Product(0,name, count, price, group);
                 }
             }
         } catch (SQLException e) {
@@ -148,7 +148,7 @@ public class DatabaseHandler extends Const {
                     String groupName = resultSet.getString("name");
 
                     Group group = groupId == 0 ? null : new Group(groupName);
-                    return new Product(name, count, price, group,0);
+                    return new Product(0,name, count, price, group);
                 }
             }
         } catch (SQLException e) {
@@ -281,7 +281,7 @@ public class DatabaseHandler extends Const {
                 String productName = set.getString("name");
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
-                Product product = new Product(productName, count, price, null,id);
+                Product product = new Product(id,productName, count, price, null);
                 products.add(product);
             }
             return products;

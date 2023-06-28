@@ -16,7 +16,7 @@ public class Product implements Serializable {
     private volatile int id;
 
 
-    public Product(String name, int count, double price, Group group, int id) {
+    public Product(int id, String name, int count, double price, Group group) {
         this.name = name;
         this.count = count;
         this.price = price;
@@ -63,5 +63,13 @@ public class Product implements Serializable {
                 ", price=" + price +
                 ", group=" + group +
                 '}';
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }
