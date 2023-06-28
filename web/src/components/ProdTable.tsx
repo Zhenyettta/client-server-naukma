@@ -17,7 +17,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
     const handleDelete = async (id: number) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this product?');
         if (!confirmDelete) {
-            return; // Abort deletion if user cancels
+            return;
         }
 
         try {
@@ -27,7 +27,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
 
             if (response.ok) {
                 console.log(`Product with ID ${id} deleted successfully.`);
-                // Perform any additional actions if needed
+                window.location.reload();
             } else {
                 console.error(`Failed to delete product with ID ${id}.`);
             }
@@ -35,6 +35,7 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
             console.error(`An error occurred while deleting product with ID ${id}.`, error);
         }
     };
+
 
 
     const handleEdit = (id: number) => {

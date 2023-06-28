@@ -56,11 +56,13 @@ public class MyServer {
             System.out.println("category");
             if (path.startsWith("/api/categories")) {
                 String method = exchange.getRequestMethod().toLowerCase();
+                System.out.println(method + " in category");
                 if (method.equals("post")) {
                     System.out.println("updating");
                 } else if (method.equals("get")) {
                     handleGetRequestCategory(path, exchange);
-                } else if (method.equals("put")) {
+                } else if (method.equals("options")) {
+                    System.out.println("Comming in");
                     handlePutRequestCategory(path, exchange);
                 } else if (method.equals("delete")) {
                     System.out.println("deleting");
@@ -82,45 +84,53 @@ public class MyServer {
         }
 
         private void handlePutRequestCategory(String path, HttpExchange exchange) throws IOException {
+            System.out.println("In here");
             String values = getBody(exchange);
             JSONObject jsonBody = new JSONObject(values);
             String name = jsonBody.getString("name");
             Group group = new Group(name);
             db.createGroup(group);
             sendResponse("", STATUS_NO_CONTENT, exchange);
-
         }
     }
-
 
     static class MyHandler implements HttpHandler {
         DatabaseHandler db = new DatabaseHandler();
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                exchange.sendResponseHeaders(204, -1); // Send a successful empty response
+                exchange.close();
+                return;
+            }
+
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
             String path = exchange.getRequestURI().getPath();
             System.out.println(path);
             if (path.startsWith("/api/good")) {
                 String method = exchange.getRequestMethod().toLowerCase();
-                System.out.println(method);
+                System.out.println(method + " 2213213");
                 if (method.equals("get")) {
                     handleGetRequest(path, exchange);
                 } else if (method.equals("put")) {
                     handlePutRequest(exchange);
                 } else if (method.equals("post")) {
                     handlePostRequest(path, exchange);
-                } else if (method.equals("options")) {
-                    System.out.println("1");
+                } else if (method.equals("delete")) {
                     handleDeleteRequest(path, exchange);
-                    System.out.println("2");
                 }
             } else {
                 System.out.println("Invalid path");
             }
         }
+
 
         private void handleGetRequest(String path, HttpExchange exchange) throws IOException {
             String id = path.split("/")[3];
@@ -185,7 +195,6 @@ public class MyServer {
         private void handleDeleteRequest(String path, HttpExchange exchange) throws IOException {
             int id = Integer.parseInt(path.split("/")[3]);
             Product product = db.getProductById(id);
-            System.out.println("DELETTING");
             if (product == null) {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
             } else {
