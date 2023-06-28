@@ -255,6 +255,18 @@ public class DatabaseHandler extends Const {
         }
     }
 
+    public boolean removeGroup(String name) {
+        String query = "DELETE FROM " + GROUPS_TABLE + " WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String getGroupByProdName(String name) {
         String query = "SELECT g.name FROM " + GROUPS_TABLE + " g JOIN " + PRODUCTS_TABLE + " p ON g.id = group_id WHERE p.name = ?";
         try (Connection connection = getConnection();

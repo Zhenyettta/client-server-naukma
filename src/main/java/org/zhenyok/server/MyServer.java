@@ -62,23 +62,25 @@ public class MyServer {
             exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
             String path = exchange.getRequestURI().getPath();
-            System.out.println("category");
             if (path.startsWith("/api/categories")) {
                 String method = exchange.getRequestMethod().toLowerCase();
-                System.out.println(method + " in category");
                 if (method.equals("post")) {
                     System.out.println("updating");
                 } else if (method.equals("get")) {
                     handleGetRequestCategory(path, exchange);
                 } else if (method.equals("options")) {
-                    System.out.println("Comming in");
                     handlePutRequestCategory(path, exchange);
                 } else if (method.equals("delete")) {
-                    System.out.println("deleting");
+                    handleDeleteRequestCategory(path,exchange);
                 }
             } else {
                 System.out.println("Invalid path");
             }
+        }
+
+        private void handleDeleteRequestCategory(String path, HttpExchange exchange) throws IOException {
+            String name = (path.split("/")[3]); // correct value
+
         }
 
         public void handleGetRequestCategory(String path, HttpExchange exchange) throws IOException {
@@ -122,10 +124,8 @@ public class MyServer {
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
             String path = exchange.getRequestURI().getPath();
-            System.out.println(path);
             if (path.startsWith("/api/good")) {
                 String method = exchange.getRequestMethod().toLowerCase();
-                System.out.println(method + " 2213213");
                 if (method.equals("get")) {
                     handleGetRequest(path, exchange);
                 } else if (method.equals("put")) {

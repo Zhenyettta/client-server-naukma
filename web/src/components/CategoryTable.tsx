@@ -12,11 +12,29 @@ interface GoodsTableProps {
 }
 
 const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
-    const handleDelete = (id: number) => {
-        console.log(`Delete product with ID ${id}`);
+    const handleDelete = async (name: string) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this category?');
+        if (!confirmDelete) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8000/api/categories/${name}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                console.log(`Product with ID ${name} deleted successfully.`);
+                window.location.reload();
+            } else {
+                console.error(`Failed to delete product with ID ${name}.`);
+            }
+        } catch (error) {
+            console.error(`An error occurred while deleting product with ID ${name}.`, error);
+        }
     };
-    const handleEdit = (id: number) => {
-        console.log(`Edit product with ID ${id}`);
+    const handleEdit = (name: string) => {
+        console.log(`Edit product with ID ${name}`);
     };
     const data = {
         columns: [
@@ -27,7 +45,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                 width: 150,
                 attributes: {
                     style: {
-                        textAlign: 'center',
+                        textAlign: 'left',
                     },
                 },
             },
@@ -47,7 +65,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
             actions: (
                 <div style={{ textAlign: 'center' }}>
                     <button
-                        onClick={() => handleEdit(category.id)}
+                        onClick={() => handleEdit(category.name)}
                         style={{
                             marginRight: '5px',
                             padding: '5px 10px',
@@ -62,7 +80,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                         Edit
                     </button>
                     <button
-                        onClick={() => handleDelete(category.id)}
+                        onClick={() => handleDelete(category.name)}
                         style={{
                             padding: '5px 10px',
                             fontSize: '14px',
