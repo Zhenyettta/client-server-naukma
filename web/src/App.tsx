@@ -10,7 +10,7 @@ export default function App() {
             <BrowserRouter>
                 <NavigationBar />
                 <Routes>
-                    <Route path="/categories" element={<Categories />} />
+                    <Route path="/goods/categories" element={<Categories />} />
                     <Route path="/goods" element={<Goods />} />
                 </Routes>
             </BrowserRouter>

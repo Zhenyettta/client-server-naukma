@@ -74,7 +74,7 @@ export default function Goods() {
                         <label class="form-label" for="amount">Category Name:</label>
                         <input class="form-input" type="text" id="amount" name="amount" required>
                                                                                               
-                        <button class="form-button" type="submit">Submit</button>
+                        <button class="form-button"  type="submit">Submit</button>
                     </form>
                 </div>
             </body>

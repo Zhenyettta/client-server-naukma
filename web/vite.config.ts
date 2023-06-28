@@ -9,5 +9,5 @@ export default defineConfig({
 
     },
     plugins: [react()],
-    base: '/goods',
+    base: 'http://localhost:5173/goods',
 })

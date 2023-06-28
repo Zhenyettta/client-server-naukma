@@ -2,7 +2,7 @@ import { Disclosure, Menu } from "@headlessui/react";
 import { Link, useLocation } from "react-router-dom";
 
 const navigation = [
-    { name: "Categories", href: "/categories" },
+    { name: "Categories", href: "/goods/categories" },
     { name: "Goods", href: "/goods" },
 ];
 
