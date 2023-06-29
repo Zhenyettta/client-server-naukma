@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static org.zhenyok.server.MyServer.MyHandler.getBody;
 
@@ -31,20 +33,22 @@ public class MyServer {
 
     private static final Key JWT_KEY = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
     private static final String AUTH_TOKEN_PREFIX = "Bearer ";
+    static DatabaseHandler db = new DatabaseHandler();
 
     public static void main(String[] args) throws IOException {
+        Executor executor = Executors.newCachedThreadPool();
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         HttpContext products = server.createContext("/", new MyHandler());
         HttpContext categories = server.createContext("/api/categories", new CategoryHandler());
 //        HttpContext login = server.createContext("/login", new LoginHandler());
 
 //        products.setAuthenticator(new Auth());
-        server.setExecutor(null);
+        server.setExecutor(executor);
         server.start();
     }
 
     static class CategoryHandler implements HttpHandler {
-        DatabaseHandler db = new DatabaseHandler();
+
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -78,7 +82,6 @@ public class MyServer {
 
         public void handleGetRequestCategory(HttpExchange exchange) {
             ArrayList<Group> categories = db.sortCategories("name");
-            System.out.println(categories);
             if (categories == null) {
                 sendResponse("Category not found", STATUS_NOT_FOUND, exchange);
             } else {
@@ -120,7 +123,6 @@ public class MyServer {
     }
 
     static class MyHandler implements HttpHandler {
-        DatabaseHandler db = new DatabaseHandler();
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -144,7 +146,6 @@ public class MyServer {
                     handleGetRequestById(path, exchange);
             }
             if (path.startsWith("/api/good")) {
-                System.out.println(method + " 2213213");
                 switch (method) {
                     case "get" -> handleGetRequest(path, exchange);
                     case "put" -> handlePutRequest(exchange);
@@ -204,7 +205,6 @@ public class MyServer {
 
         private void handleGetRequest(String path, HttpExchange exchange) throws IOException {
             ArrayList<Product> products = db.sort("name");
-            System.out.println(products);
             if (products == null) {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
             } else {
@@ -216,7 +216,6 @@ public class MyServer {
         private void handleGetRequestById(String path, HttpExchange exchange) throws IOException {
             int id = Integer.parseInt(path.split("/")[3]);
             Product products = db.getProductById(id);
-            System.out.println(products);
             if (products == null) {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
             } else {
