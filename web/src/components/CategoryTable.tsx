@@ -200,7 +200,17 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
     return (
         <div>
             <h1>Categories</h1>
-            <p>{answerWithName}</p>
+            <p
+                style={{
+                    textAlign: 'right',
+                    marginRight:'40px',
+                    fontFamily: 'Montserrat',
+                    fontWeight: 'bold',
+                    fontSize: '20px',
+                }}
+            >
+                {answerWithName}
+            </p>
 
     <MDBDataTableV5 data={data} />
     </div>
