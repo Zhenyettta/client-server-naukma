@@ -115,7 +115,8 @@ export default function Categories() {
     return (
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             {/* Display the totalSum */}
-            <div>Total Sum: {totalSum}</div>
+
+            <label>Total Sum: {totalSum}</label>
 
             <div>
                 <span className="sr-only">Add category</span>

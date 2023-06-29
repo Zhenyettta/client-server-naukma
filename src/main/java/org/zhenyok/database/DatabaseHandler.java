@@ -339,10 +339,19 @@ public class DatabaseHandler extends Const {
     }
 
     public int getTotalSum() {
+        String query = "SELECT SUM(count * price) AS total_sum FROM " + PRODUCTS_TABLE;;
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            ResultSet set = statement.executeQuery();
+            int sum = 0;
+            while (set.next()) {
+                sum = Integer.parseInt(set.getString("total_sum"));
+            }
+            return sum;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-        //query
-        int sum = 2313;
-        return sum;
     }
 }
 
