@@ -47,9 +47,6 @@
 }
 */
 
-.centered-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+td, thead {
     text-align: center;
 }

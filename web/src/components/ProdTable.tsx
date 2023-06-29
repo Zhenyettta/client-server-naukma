@@ -1,5 +1,6 @@
 import React from 'react';
 import { MDBDataTableV5 } from 'mdbreact';
+import '../App.css'
 
 interface Item {
     id: number;
@@ -205,11 +206,6 @@ const submitButton = document.getElementById('submit-button');
                 label: 'Actions',
                 field: 'actions',
                 width: 100,
-                attributes: {
-                    style: {
-                        textAlign: 'center',
-                    },
-                },
             },
         ],
         rows: products.map((product) => ({
@@ -223,7 +219,7 @@ const submitButton = document.getElementById('submit-button');
 
 
             actions: (
-                <div style={{ textAlign: 'center' }}>
+                <div>
                     <button
                         onClick={() => handleEdit(product.id)}
                         style={{

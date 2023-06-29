@@ -36,28 +36,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({categories}) => {
         }
     };
 
-    const [answerWithName, setAnswer] = useState('');
-
-    const handlePrice = async (name: string) => {
-        try {
-            const response = await fetch(`http://localhost:8000/api/category_price/${name}`, {
-                method: 'GET',
-            });
-
-            if (response.ok) {
-                const responseData = await response.json();
-                const {answer} = responseData;
-                const answerWithName = `${name}: ${answer}$`; // Add the name to the answer
-                setAnswer(answerWithName); // Set the answer with the name in the state
-            } else {
-                console.error(`An error with ${name}.`);
-            }
-        } catch (error) {
-            console.error(`An error with ${name}.`, error);
-        }
-    };
-
-
+    const [answerWithName] = useState('');
     const handleEdit = (name: string) => {
 
         const formWindow = window.open('', '_blank');
@@ -147,37 +126,23 @@ const CategoryTable: React.FC<GoodsTableProps> = ({categories}) => {
                 field: 'name',
                 sort: 'asc',
                 width: 150,
-                attributes: {
-                    style: {
-                        textAlign: 'left',
-                    },
-                },
+
             },
             {
                 label: 'Values',
                 field: 'price',
                 width: 100,
-                attributes: {
-                    style: {
-                        textAlign: 'center',
-                    },
-                },
 
             },
             {
                 label: 'Actions',
                 field: 'actions',
                 width: 100,
-                attributes: {
-                    style: {
-                        textAlign: 'center',
-                    },
-                },
             },
         ],
         rows: categories.map((category) => ({
             name: category.name,
-            price: <div className={"centered-text"}>{category.price}</div>,
+            price: category.price,
             actions: (
                 <div style={{textAlign: 'center'}}>
                     <button
@@ -208,22 +173,6 @@ const CategoryTable: React.FC<GoodsTableProps> = ({categories}) => {
                         }}
                     >
                         Delete
-                    </button>
-                    <button
-                        onClick={() => handlePrice(category.name)}
-                        style={{
-                            marginLeft: "5px",
-
-                            padding: '5px 10px',
-                            fontSize: '14px',
-                            background: 'orange',
-                            color: '#FFF',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        Price
                     </button>
                 </div>
             ),
