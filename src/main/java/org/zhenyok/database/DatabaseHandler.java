@@ -337,6 +337,13 @@ public class DatabaseHandler extends Const {
             throw new RuntimeException(e);
         }
     }
+
+    public int getTotalSum() {
+
+        //query
+        int sum = 2313;
+        return sum;
+    }
 }
 
 

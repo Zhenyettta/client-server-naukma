@@ -13,6 +13,7 @@ export default function Categories() {
     const handleAddCategory = async () => {
         const formWindow = window.open('', '_blank');
 
+        // @ts-ignore
         formWindow.document.write(`
       <html>
       <head>
@@ -83,10 +84,13 @@ export default function Categories() {
     `);
     };
 
-    // Fetch categories data
+    const [totalSum, setTotalSum] = useState(0);
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
+
                 const response = await axios.get('http://localhost:8000/api/categories');
                 const { data } = response;
                 const newCategories = data.map((item: any) => ({
@@ -94,6 +98,11 @@ export default function Categories() {
                     name: item.name,
                 }));
                 setCategories(newCategories);
+
+                const sumResponse = await axios.get('http://localhost:8000/api/totalSum');
+                const { totalSum } = sumResponse.data;
+                setTotalSum(totalSum);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -105,12 +114,16 @@ export default function Categories() {
 
     return (
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            {/* Display the totalSum */}
+            <div>Total Sum: {totalSum}</div>
+
             <div>
                 <span className="sr-only">Add category</span>
             </div>
             <div className="mt-8 mb-8">
                 <CategoryTable categories={categories} />
             </div>
+
 
             <button
                 className="w-104 h-47 flex-shrink-0 flex items-center justify-center bg-blue-600 hover:bg-blue-600 text-white"

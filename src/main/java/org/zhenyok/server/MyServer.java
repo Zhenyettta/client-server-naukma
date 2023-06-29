@@ -69,7 +69,6 @@ public class MyServer {
                     case "post" -> System.out.println("updating");
                     case "get" -> handleGetRequestCategory(exchange);
                     case "put" -> {
-                        System.out.println("Comming in");
                         handlePutRequestCategory(exchange);
                     }
                     case "delete" -> handleDeleteRequestCategory(path, exchange);
@@ -91,7 +90,6 @@ public class MyServer {
         }
 
         private void handlePutRequestCategory(HttpExchange exchange) throws IOException {
-            System.out.println("In here");
             String values = getBody(exchange);
             JSONObject jsonBody = new JSONObject(values);
             String name = jsonBody.getString("name");
@@ -127,9 +125,9 @@ public class MyServer {
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
             String path = exchange.getRequestURI().getPath();
-            System.out.println(path);
+            String method = exchange.getRequestMethod().toLowerCase();
+
             if (path.startsWith("/api/good")) {
-                String method = exchange.getRequestMethod().toLowerCase();
                 System.out.println(method + " 2213213");
                 switch (method) {
                     case "get" -> handleGetRequest(path, exchange);
@@ -137,7 +135,30 @@ public class MyServer {
                     case "post" -> handlePostRequest(path, exchange);
                     case "delete" -> handleDeleteRequest(path, exchange);
                 }
-            } else {
+            }
+            else if(path.startsWith("/api/totalSum") ){
+                int sumTotal = db.getTotalSum();
+
+
+                // Create a JSON object to store the response data
+                JSONObject responseData = new JSONObject();
+                responseData.put("totalSum", sumTotal);
+
+                // Set the response headers
+                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+
+                // Set the response status code
+                exchange.sendResponseHeaders(200, responseData.toString().getBytes().length);
+
+                // Write the response data to the response body
+                OutputStream outputStream = exchange.getResponseBody();
+                outputStream.write(responseData.toString().getBytes());
+                outputStream.close();
+            }
+            else {
                 System.out.println("Invalid path");
             }
         }
