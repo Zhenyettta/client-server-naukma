@@ -5,6 +5,7 @@ import CategoryTable from './CategoryTable.tsx';
 interface Item {
     id: number;
     name: string;
+    price: number;
 }
 
 export default function Categories() {
@@ -93,6 +94,7 @@ export default function Categories() {
                 const newCategories = data.map((item: any) => ({
                     id: item.id,
                     name: item.name,
+                    price: item.price,
                 }));
                 setCategories(newCategories);
 

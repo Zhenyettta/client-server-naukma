@@ -1,17 +1,19 @@
 // table.tsx
 import React, {useState} from 'react';
-import { MDBDataTableV5 } from 'mdbreact';
+import {MDBDataTableV5} from 'mdbreact';
+import '../App.css'
 
 interface Item {
     id: number;
     name: string;
+    price: number;
 }
 
 interface GoodsTableProps {
     categories: Item[];
 }
 
-const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
+const CategoryTable: React.FC<GoodsTableProps> = ({categories}) => {
     const handleDelete = async (name: string) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this category?');
         if (!confirmDelete) {
@@ -44,7 +46,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
 
             if (response.ok) {
                 const responseData = await response.json();
-                const { answer } = responseData;
+                const {answer} = responseData;
                 const answerWithName = `${name}: ${answer}$`; // Add the name to the answer
                 setAnswer(answerWithName); // Set the answer with the name in the state
             } else {
@@ -56,9 +58,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
     };
 
 
-
-
-    const handleEdit= (name: string) => {
+    const handleEdit = (name: string) => {
 
         const formWindow = window.open('', '_blank');
         // @ts-ignore
@@ -154,6 +154,17 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                 },
             },
             {
+                label: 'Values',
+                field: 'price',
+                width: 100,
+                attributes: {
+                    style: {
+                        textAlign: 'center',
+                    },
+                },
+
+            },
+            {
                 label: 'Actions',
                 field: 'actions',
                 width: 100,
@@ -166,8 +177,9 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
         ],
         rows: categories.map((category) => ({
             name: category.name,
+            price: <div className={"centered-text"}>{category.price}</div>,
             actions: (
-                <div style={{ textAlign: 'center' }}>
+                <div style={{textAlign: 'center'}}>
                     <button
                         onClick={() => handleEdit(category.name)}
                         style={{
@@ -186,7 +198,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                     <button
                         onClick={() => handleDelete(category.name)}
                         style={{
-                            padding:'5px 10px',
+                            padding: '5px 10px',
                             fontSize: '14px',
                             background: '#FF4136',
                             color: '#FFF',
@@ -200,7 +212,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                     <button
                         onClick={() => handlePrice(category.name)}
                         style={{
-                            marginLeft:"5px",
+                            marginLeft: "5px",
 
                             padding: '5px 10px',
                             fontSize: '14px',
@@ -224,7 +236,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
             <p
                 style={{
                     textAlign: 'right',
-                    marginRight:'40px',
+                    marginRight: '40px',
                     fontFamily: 'Montserrat',
                     fontWeight: 'bold',
                     fontSize: '20px',
@@ -233,9 +245,9 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                 {answerWithName}
             </p>
 
-    <MDBDataTableV5 data={data} />
-    </div>
-);
+            <MDBDataTableV5 data={data}/>
+        </div>
+    );
 };
 
 export default CategoryTable;
