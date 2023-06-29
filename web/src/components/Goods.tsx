@@ -108,7 +108,7 @@ export default function Goods() {
                     
                   const response = await axios.put('http://localhost:8000/api/good', 
                   {group: categoryName, name: name, price: price, quantity: amount, supplier: supplier, characteristics: characteristics});
-                    
+                     window.location.href = 'http://localhost:5173/goods'
                   // Handle the response if needed
                 } catch (error) {
                   console.error('Error sending GET request:', error);

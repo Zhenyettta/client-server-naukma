@@ -105,15 +105,36 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
             </head>
             <body>
                 <div class="form-container">
-                    <h2>Edit Product "${name}"</h2>
-                    <form>
-                        <label class="form-label" for="name">New Name:</label>
-                        <input class="form-input" type="text" id="name" name="name">
+                    <h2>Edit category "${name}"</h2>
+                    
+                        <label class="form-label" for="name" >Name:</label>
+                        <input class="form-input" type="text" id="name" value="${name}" name="name">
                          
-                        <button class="form-button"  type="submit">Submit</button>
-                    </form>
+                        <button class="form-button" id="submit-button" >Submit</button>
+                    
                 </div>
+                <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+            <script>
+            const submitButton = document.getElementById('submit-button');
+             submitButton.addEventListener('click', async () => {
+             const nameInput = document.getElementById('name');
+             const name = nameInput.value;
+            
+                try {
+                    
+                  const response = await axios.post('http://localhost:8000/api/categories/${name}', 
+                  {name: name});
+                  window.location.href = 'http://localhost:5173/goods/categories'
+                  
+                } catch (error) {
+                  console.error('Error sending GET request:', error);
+                }
+    
+               
+              });
+            </script>
             </body>
+           
             </html>
             
         `);

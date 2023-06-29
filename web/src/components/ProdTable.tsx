@@ -41,7 +41,11 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
 
 
 
-    const handleEdit= (id: number) => {
+    const handleEdit= async (id: number) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/good/${id}`);
+            if (response.ok) {
+                const product = await response.json();
 
         const formWindow = window.open('', '_blank');
         // @ts-ignore
@@ -86,37 +90,73 @@ const ProdTable: React.FC<ProdTableProps> = ({ products }) => {
                     }
                 </style>
             </head>
-            <body>
-                <div class="form-container">
-                    <h2>Edit Product "${id}"</h2>
-                    <form>
-                        <label class="form-label" for="name">Name:</label>
-                        <input class="form-input" type="text" id="name" name="name">
+             <body>
+          <div class="form-container">
+            <h2>Edit Product "${id}"</h2>
+              <label class="form-label" for="name">Name:</label>
+              <input class="form-input" type="text" id="name" name="name" value="${product.name}">
                          
-                         <label class="form-label" for="category">Category:</label>
-                        <input class="form-input" type="text" id="category" name="category">
+              <label class="form-label" for="category">Category:</label>
+              <input class="form-input" type="text" id="category" name="category" value="${product.group}">
   
-                         <label class="form-label" for="price">Price:</label>
-                        <input class="form-input" type="text" id="price" name="price">
+              <label class="form-label" for="price">Price:</label>
+              <input class="form-input" type="text" id="price" name="price" value="${product.price}">
                         
-                        <label class="form-label" for="amount">Category Name:</label>
-                        <input class="form-input" type="text" id="amount" name="amount">
+              <label class="form-label" for="amount">Quantity:</label>
+              <input class="form-input" type="text" id="amount" name="amount" value="${product.count}">
                         
-                        <label class="form-label" for="supplier">Supplier Name:</label>
-                        <input class="form-input" type="text" id="supplier" name="supplier">
+              <label class="form-label" for="supplier">Supplier Name:</label>
+              <input class="form-input" type="text" id="supplier" name="supplier" value="${product.supplier}">
                         
-                        <label class="form-label" for="characteristics">Characteristics:</label>
-                        <input class="form-input" type="text" id="characteristics" name="characteristics">
+              <label class="form-label" for="characteristics">Characteristics:</label>
+              <input class="form-input" type="text" id="characteristics" name="characteristics" value="${product.characteristics}">
                                                                                               
-                        <button class="form-button"  type="submit">Submit</button>
-                    </form>
-                </div>
-            </body>
+              <button class="form-button" id = "submit-button">Submit</button>
+          </div>
+          <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+            <script>
+const submitButton = document.getElementById('submit-button');
+             submitButton.addEventListener('click', async () => {
+             const nameInput = document.getElementById('name');
+             const categoryNameInput = document.getElementById('category');
+             const priceInput = document.getElementById('price');
+             const amountInput = document.getElementById('amount');
+             const supplierInput = document.getElementById('supplier');
+             const characteristicInput = document.getElementById('characteristics');
+             
+             const name = nameInput.value;
+             const categoryName = categoryNameInput.value;
+             const price = priceInput.value;
+             const amount = amountInput.value;
+             const supplier = supplierInput.value;
+             const characteristics = characteristicInput.value;
+
+                try {
+                    
+                  const response = await axios.post('http://localhost:8000/api/good/${id}', 
+                  {group: categoryName, name: name, price: price, quantity: amount, supplier: supplier, characteristics: characteristics});
+                  window.location.href = 'http://localhost:5173/goods'
+                  
+                } catch (error) {
+                  console.error('Error sending GET request:', error);
+                }
+    
+               
+              });
+            </script>
+        </body>
             </html>
             
         `);
-
+            } else {
+                console.error(`Failed to fetch product with ID ${id}.`);
+            }
+        } catch (error) {
+            console.error(`An error occurred while fetching product with ID ${id}.`, error);
+        }
     };
+
+
     const data = {
         columns: [
             {

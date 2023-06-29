@@ -66,11 +66,9 @@ public class MyServer {
                 String method = exchange.getRequestMethod().toLowerCase();
                 System.out.println(method + " in category");
                 switch (method) {
-                    case "post" -> System.out.println("updating");
+                    case "post" -> handlePostRequestCategory(path, exchange);
                     case "get" -> handleGetRequestCategory(exchange);
-                    case "put" -> {
-                        handlePutRequestCategory(exchange);
-                    }
+                    case "put" -> handlePutRequestCategory(exchange);
                     case "delete" -> handleDeleteRequestCategory(path, exchange);
                 }
             } else {
@@ -104,6 +102,21 @@ public class MyServer {
             db.removeGroup(name);
             sendResponse("", STATUS_NO_CONTENT, exchange);
         }
+
+        private void handlePostRequestCategory(String path, HttpExchange exchange) throws IOException {
+            String oldName = path.split("/")[3];
+            String values = getBody(exchange);
+            JSONObject jsonBody = new JSONObject(values);
+            String name = jsonBody.getString("name");
+            if (db.getGroupByName(oldName).equals("")) {
+                sendResponse("group not found", STATUS_NOT_FOUND, exchange);
+            } else {
+                if (!name.isEmpty()) {
+                    db.setCategoryName(oldName, name);
+                }
+                sendResponse("", STATUS_NO_CONTENT, exchange);
+            }
+        }
     }
 
     static class MyHandler implements HttpHandler {
@@ -126,7 +139,10 @@ public class MyServer {
 
             String path = exchange.getRequestURI().getPath();
             String method = exchange.getRequestMethod().toLowerCase();
-
+            if ((path.split("/")).length == 4) {
+                if (method.equals("get"))
+                    handleGetRequestById(path, exchange);
+            }
             if (path.startsWith("/api/good")) {
                 System.out.println(method + " 2213213");
                 switch (method) {
@@ -135,8 +151,7 @@ public class MyServer {
                     case "post" -> handlePostRequest(path, exchange);
                     case "delete" -> handleDeleteRequest(path, exchange);
                 }
-            }
-            else if(path.startsWith("/api/totalSum") ){
+            } else if (path.startsWith("/api/totalSum")) {
                 int sumTotal = db.getTotalSum();
 
 
@@ -157,9 +172,7 @@ public class MyServer {
                 OutputStream outputStream = exchange.getResponseBody();
                 outputStream.write(responseData.toString().getBytes());
                 outputStream.close();
-            }
-
-            else if (path.startsWith("/api/category_price")){
+            } else if (path.startsWith("/api/category_price")) {
                 // Extract the category name from the request path
                 String categoryName = path.substring("/api/category_price/".length());
 
@@ -183,8 +196,7 @@ public class MyServer {
                 OutputStream outputStream = exchange.getResponseBody();
                 outputStream.write(responseData.toString().getBytes());
                 outputStream.close();
-            }
-            else {
+            } else {
                 System.out.println("Invalid path");
             }
         }
@@ -197,6 +209,18 @@ public class MyServer {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
             } else {
                 JSONArray jo = new JSONArray(products);
+                sendResponse(jo.toString(1), STATUS_OK, exchange);
+            }
+        }
+
+        private void handleGetRequestById(String path, HttpExchange exchange) throws IOException {
+            int id = Integer.parseInt(path.split("/")[3]);
+            Product products = db.getProductById(id);
+            System.out.println(products);
+            if (products == null) {
+                sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
+            } else {
+                JSONObject jo = new JSONObject(products);
                 sendResponse(jo.toString(1), STATUS_OK, exchange);
             }
         }
@@ -230,6 +254,8 @@ public class MyServer {
             int quantity = jsonBody.getInt("quantity");
             double price = jsonBody.getDouble("price");
             String groupName = jsonBody.getString("group");
+            String characteristics = jsonBody.getString("characteristics");
+            String supplier = jsonBody.getString("supplier");
             Product product = db.getProductById(id);
             if (product == null) {
                 sendResponse("Product not found", STATUS_NOT_FOUND, exchange);
@@ -238,6 +264,12 @@ public class MyServer {
             } else {
                 if (!name.isEmpty()) {
                     db.setName(id, name);
+                }
+                if (!supplier.isEmpty()) {
+                    db.setSupplier(id, supplier);
+                }
+                if (!characteristics.isEmpty()) {
+                    db.setCharacteristics(id, characteristics);
                 }
                 if (quantity != -1) {
                     db.setCount(id, quantity);
@@ -248,6 +280,7 @@ public class MyServer {
                 if (!groupName.isEmpty()) {
                     db.setGroup(id, groupName);
                 }
+
                 sendResponse("", STATUS_NO_CONTENT, exchange);
             }
         }

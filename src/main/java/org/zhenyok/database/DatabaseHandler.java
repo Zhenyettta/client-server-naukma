@@ -119,6 +119,7 @@ public class DatabaseHandler extends Const {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
+
                     String name = resultSet.getString("name");
                     int count = resultSet.getInt("count");
                     int price = resultSet.getInt("price");
@@ -129,7 +130,7 @@ public class DatabaseHandler extends Const {
 
                     Group group = groupId == 0 ? null : new Group(groupName);
                     String groupNameFinal = group == null ? "" : group.getName();
-                    return new Product(0, name, count, price, groupNameFinal, supplier, characteristics);
+                    return new Product(id, name, count, price, groupNameFinal, supplier, characteristics);
                 }
             }
         } catch (SQLException e) {
@@ -140,6 +141,43 @@ public class DatabaseHandler extends Const {
 
     public boolean setName(int id, String name) {
         String query = "UPDATE " + PRODUCTS_TABLE + " SET name = ? WHERE id = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            statement.setInt(2, id);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean setCategoryName(String oldName, String name) {
+        String query = "UPDATE " + GROUPS_TABLE + " SET name = ? WHERE name = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            statement.setString(2, oldName);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean setSupplier(int id, String name) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET supplier = ? WHERE id = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, name);
+            statement.setInt(2, id);
+            int rows = statement.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean setCharacteristics(int id, String name) {
+        String query = "UPDATE " + PRODUCTS_TABLE + " SET characteristics = ? WHERE id = ?";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, name);
