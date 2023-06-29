@@ -16,74 +16,88 @@ export default function Categories() {
 
         // @ts-ignore
         formWindow.document.write(`
-      <html>
-      <head>
-          <title>Add Category</title>
-          <style>
-              body {
-                font-family: 'Montserrat', serif;
-                background: linear-gradient(#007bff,pink);
-              }
-              .form-container {
-                max-width: 400px;
-                margin: 20px auto;
-                padding: 20px;
-                border: 1px solid #ccc;
-                border-radius: 10px;
-                background: whitesmoke;
-              }
-              .form-label {
-                display: block;
-                margin-bottom: 10px;
-                font-size: 16px;
-              }
-              .form-input {
-                width: 100%;
-                padding: 8px;
-                font-size: 16px;
-              }
-              .form-button {
-                margin-top: 20px;
-                padding: 10px 20px;
-                font-size: 16px;
-                background: #3E7FFF;
-                color: #FFF;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-              }
-          </style>
-      </head>
-      
-      <body>
-        <h2 style="color: black; font-size: 20px; text-align: center; font-family: 'Arial', sans-serif; font-weight: bold; text-transform: uppercase;">Add Category</h2>
-        <label class="form-label" for="category-name">Category Name:</label>
-        <input class="form-input" type="text" id="category-name" name="category-name" required>
-        <button class="form-button" id="submit-button">Submit</button>
+    <html>
+    <head>
+        <title>Add Category</title>
+                <style>
+                    body {
+                        font-family: 'Montserrat', serif;
+                        background: linear-gradient(#007bff,pink);
+
+                    }
+                    .form-container {
+                        max-width: 400px;
+                        margin: 20px auto;
+                        padding: 20px;
+                        border: 1px solid #ccc;
+                        border-radius: 10px;
+                        background: whitesmoke;
+
+                    }
+                    .form-label {
+                        display: block;
+                        margin-bottom: 10px;
+                        font-size: 16px;
+                    }
+                    .form-input {
+                        width: 100%;
+                        padding: 8px;
+                        font-size: 16px;
+                    }
+                    .form-button {
+                        margin-top: 20px;
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        background: #3E7FFF;
+                        color: #FFF;
+                        border: none;
+                        border-radius: 10px;
+                        cursor: pointer;
+                    }
+                    .form-button.disabled {
+                        background: red;
+                        cursor: not-allowed;
+                    }
+                </style>
+    </head>
+    
+    <body>
+                
+         <div class="form-container">
+              <h2 style="color: black; font-size: 20px; text-align: center; font-family: 'Arial', sans-serif; font-weight: bold; text-transform: uppercase;">Add Category</h2>
+              <label class="form-label" for="category-name">Category Name:</label>
+              <input class="form-input" type="text" id="category-name" name="category-name" required>
+              <button class="form-button" id="submit-button">Submit</button>
+          </div>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script>
           const submitButton = document.getElementById('submit-button');
           submitButton.addEventListener('click', async () => {
             const categoryNameInput = document.getElementById('category-name');
             const categoryName = categoryNameInput.value;
-
             
-            try {
-                
+            submitButton.disabled = true;
+            submitButton.classList.add('disabled');
+
+            try {              
               const response = await axios.put('http://localhost:8000/api/categories', {name: categoryName});
               window.location.href = 'http://localhost:5173/goods/categories'
-              // Handle the response if needed
             } catch (error) {
               console.error('Error sending GET request:', error);
             }
 
-           
+            setTimeout(() => {
+              submitButton.disabled = false;
+              submitButton.classList.remove('disabled');
+            }, 2000);
           });
         </script>
       </body>
       </html>
     `);
     };
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -121,7 +135,7 @@ export default function Categories() {
 
             <button
                 className="w-104 h-47 flex-shrink-0 flex items-center justify-center bg-blue-600 hover:bg-blue-600 text-white"
-                title="Sign In"
+                title="Add"
                 style={{
                     borderRadius: '10px',
                     background: '#3E7FFF',
