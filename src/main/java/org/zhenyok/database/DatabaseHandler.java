@@ -111,7 +111,7 @@ public class DatabaseHandler extends Const {
     }
 
     public Product getProductById(int id) {
-        String query = "SELECT p.name, p.count, p.price, p.group_id, g.name, p.supplier, p.characteristics " +
+        String query = "SELECT p.name, p.count, p.price, p.group_id, g.name as group_name, p.supplier, p.characteristics " +
                 "FROM " + PRODUCTS_TABLE + " p LEFT JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id " +
                 "WHERE p.id = ?";
         try (Connection connection = getConnection();
@@ -124,7 +124,7 @@ public class DatabaseHandler extends Const {
                     int count = resultSet.getInt("count");
                     int price = resultSet.getInt("price");
                     int groupId = resultSet.getInt("group_id");
-                    String groupName = resultSet.getString("name");
+                    String groupName = resultSet.getString("group_name");
                     String supplier = resultSet.getString("supplier");
                     String characteristics = resultSet.getString("characteristics");
 
