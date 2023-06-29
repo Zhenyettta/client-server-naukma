@@ -7,6 +7,7 @@ import java.util.List;
 public class Group {
     public static List<Group> groups = Collections.synchronizedList(new ArrayList<>());
     private final String name;
+    private int price;
 
 
     public Group(String name) {
@@ -17,6 +18,13 @@ public class Group {
         return name;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     @Override
     public String toString() {

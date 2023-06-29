@@ -29,7 +29,7 @@ public class DatabaseHandler extends Const {
     }
 
     public int createProduct(Product product) {
-        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price, group_id, characteristics, supplier) VALUES (?, ?, ?, "+(getGroupId(product.getGroup())==-1?null:getGroupId(product.getGroup()))+", ?, ?) RETURNING id";
+        String query = "INSERT INTO " + PRODUCTS_TABLE + "(name, count, price, group_id, characteristics, supplier) VALUES (?, ?, ?, " + (getGroupId(product.getGroup()) == -1 ? null : getGroupId(product.getGroup())) + ", ?, ?) RETURNING id";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, product.getName());
@@ -164,6 +164,7 @@ public class DatabaseHandler extends Const {
             throw new RuntimeException(e);
         }
     }
+
     public boolean setSupplier(int id, String name) {
         String query = "UPDATE " + PRODUCTS_TABLE + " SET supplier = ? WHERE id = ?";
         try (Connection connection = getConnection();
@@ -176,6 +177,7 @@ public class DatabaseHandler extends Const {
             throw new RuntimeException(e);
         }
     }
+
     public boolean setCharacteristics(int id, String name) {
         String query = "UPDATE " + PRODUCTS_TABLE + " SET characteristics = ? WHERE id = ?";
         try (Connection connection = getConnection();
@@ -359,14 +361,18 @@ public class DatabaseHandler extends Const {
     }
 
     public ArrayList<Group> sortCategories(String sortingCriteria) {
-        String query = "SELECT name FROM " + GROUPS_TABLE + " ORDER BY " + sortingCriteria;
+        String query = "SELECT g.name AS group_name, " +
+                "COALESCE(SUM(p.price * p.count), 0) AS total_value FROM " + GROUPS_TABLE + " AS g" +
+                " LEFT JOIN " + PRODUCTS_TABLE + " AS p ON g.id = p.group_id GROUP BY g.name, p.group_id; ";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet set = statement.executeQuery();
             ArrayList<Group> products = new ArrayList<>();
             while (set.next()) {
-                String productName = set.getString("name");
+                String productName = set.getString("group_name");
+                int value = set.getInt("total_value");
                 Group product = new Group(productName);
+                product.setPrice(value);
                 products.add(product);
             }
             return products;
@@ -377,7 +383,8 @@ public class DatabaseHandler extends Const {
     }
 
     public int getTotalSum() {
-        String query = "SELECT SUM(count * price) AS total_sum FROM " + PRODUCTS_TABLE;;
+        String query = "SELECT SUM(count * price) AS total_sum FROM " + PRODUCTS_TABLE;
+        ;
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet set = statement.executeQuery();
