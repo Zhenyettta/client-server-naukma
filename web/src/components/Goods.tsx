@@ -124,6 +124,7 @@ export default function Goods() {
 
     };
 
+    const [totalSum, setTotalSum] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -140,6 +141,11 @@ export default function Goods() {
                     characteristics: item.characteristics,
                 }));
                 setProducts(newProducts);
+
+                const sumResponse = await axios.get('http://localhost:8000/api/totalSum');
+                const { totalSum } = sumResponse.data;
+                setTotalSum(totalSum);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -150,6 +156,12 @@ export default function Goods() {
 
     return (
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+
+            {/* Display the totalSum */}
+
+            <div className="flex justify-end">
+                <p className="font-bold text-xl">Total Sum: {totalSum}</p>
+            </div>
 
             <div className="mt-8 mb-8">
                 <ProdTable products={products} />

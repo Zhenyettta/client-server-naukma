@@ -158,6 +158,32 @@ public class MyServer {
                 outputStream.write(responseData.toString().getBytes());
                 outputStream.close();
             }
+
+            else if (path.startsWith("/api/category_price")){
+                // Extract the category name from the request path
+                String categoryName = path.substring("/api/category_price/".length());
+
+                // Perform any necessary logic to determine the answer
+                int answer = db.getGroupPrice(categoryName);
+
+                // Create a JSON object to store the response data
+                JSONObject responseData = new JSONObject();
+                responseData.put("answer", answer);
+
+                // Set the response headers
+                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+
+                // Set the response status code
+                exchange.sendResponseHeaders(200, responseData.toString().getBytes().length);
+
+                // Write the response data to the response body
+                OutputStream outputStream = exchange.getResponseBody();
+                outputStream.write(responseData.toString().getBytes());
+                outputStream.close();
+            }
             else {
                 System.out.println("Invalid path");
             }

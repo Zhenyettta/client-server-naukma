@@ -84,9 +84,6 @@ export default function Categories() {
     `);
     };
 
-    const [totalSum, setTotalSum] = useState(0);
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -99,9 +96,6 @@ export default function Categories() {
                 }));
                 setCategories(newCategories);
 
-                const sumResponse = await axios.get('http://localhost:8000/api/totalSum');
-                const { totalSum } = sumResponse.data;
-                setTotalSum(totalSum);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -114,9 +108,6 @@ export default function Categories() {
 
     return (
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            {/* Display the totalSum */}
-
-            <label>Total Sum: {totalSum}</label>
 
             <div>
                 <span className="sr-only">Add category</span>

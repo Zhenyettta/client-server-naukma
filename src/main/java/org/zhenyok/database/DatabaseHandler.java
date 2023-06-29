@@ -353,6 +353,30 @@ public class DatabaseHandler extends Const {
         }
 
     }
+
+    public int getGroupPrice(String categoryName) {
+        int totalPrice = 0;
+
+        String query = "SELECT SUM(p.count * p.price) AS total_price " +
+                "FROM groups g " +
+                "JOIN products p ON g.id = p.group_id " +
+                "WHERE g.name = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, categoryName);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    totalPrice = resultSet.getInt("total_price");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalPrice;
+    }
 }
 
 

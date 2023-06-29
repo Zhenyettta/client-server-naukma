@@ -1,5 +1,5 @@
 // table.tsx
-import React from 'react';
+import React, {useState} from 'react';
 import { MDBDataTableV5 } from 'mdbreact';
 
 interface Item {
@@ -33,6 +33,31 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
             console.error(`An error occurred while deleting product with ID ${name}.`, error);
         }
     };
+
+    const [answerWithName, setAnswer] = useState('');
+
+    const handlePrice = async (name: string) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/category_price/${name}`, {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                const { answer } = responseData;
+                const answerWithName = `${name}: ${answer}$`; // Add the name to the answer
+                setAnswer(answerWithName); // Set the answer with the name in the state
+            } else {
+                console.error(`An error with ${name}.`);
+            }
+        } catch (error) {
+            console.error(`An error with ${name}.`, error);
+        }
+    };
+
+
+
+
     const handleEdit= (name: string) => {
 
         const formWindow = window.open('', '_blank');
@@ -140,7 +165,7 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                     <button
                         onClick={() => handleDelete(category.name)}
                         style={{
-                            padding: '5px 10px',
+                            padding:'5px 10px',
                             fontSize: '14px',
                             background: '#FF4136',
                             color: '#FFF',
@@ -151,6 +176,22 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
                     >
                         Delete
                     </button>
+                    <button
+                        onClick={() => handlePrice(category.name)}
+                        style={{
+                            marginLeft:"5px",
+
+                            padding: '5px 10px',
+                            fontSize: '14px',
+                            background: 'orange',
+                            color: '#FFF',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        Price
+                    </button>
                 </div>
             ),
         })) as any[],
@@ -159,6 +200,8 @@ const CategoryTable: React.FC<GoodsTableProps> = ({ categories }) => {
     return (
         <div>
             <h1>Categories</h1>
+            <p>{answerWithName}</p>
+
     <MDBDataTableV5 data={data} />
     </div>
 );
