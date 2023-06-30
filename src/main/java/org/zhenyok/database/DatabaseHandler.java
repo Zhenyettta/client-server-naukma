@@ -337,9 +337,13 @@ public class DatabaseHandler extends Const {
     }
 
     public ArrayList<Product> sort(String sortingCriteria) {
-        String query = "SELECT id, name, count, price, group_id, supplier, characteristics FROM " + PRODUCTS_TABLE + " ORDER BY " + sortingCriteria;
+        String query = "SELECT p.id, p.name, p.count, p.price, p.group_id, p.supplier, p.characteristics, g.name as group_name "
+                + "FROM " + PRODUCTS_TABLE + " p "
+                + "JOIN " + GROUPS_TABLE + " g ON p.group_id = g.id "
+                + "ORDER BY ?";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, sortingCriteria);
             ResultSet set = statement.executeQuery();
             ArrayList<Product> products = new ArrayList<>();
             while (set.next()) {
@@ -349,8 +353,8 @@ public class DatabaseHandler extends Const {
                 String characteristics = set.getString("characteristics");
                 int count = set.getInt("count");
                 double price = set.getDouble("price");
-                int groupId = set.getInt("group_id");
-                Product product = new Product(id, productName, count, price, getGroup(groupId), supplier, characteristics);
+                String groupName = set.getString("group_name");
+                Product product = new Product(id, productName, count, price, groupName, supplier, characteristics);
                 products.add(product);
             }
             return products;
